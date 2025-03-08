@@ -19,6 +19,7 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
+
   const [team, setTeam] = useState([]);
   const [teamPoints, setTeamPoints] = useState(0);
   const [remainingPlayers, setRemainingPlayers] = useState(availablePlayers);
@@ -32,12 +33,13 @@ const TeamView = () => {
     }
   };
   // Initialize the team with all available players (team is full initially)
+
   const [team, setTeam] = useState(availablePlayers);
-  // Calculate initial team points by summing all player points
   const initialPoints = availablePlayers.reduce((sum, player) => sum + player.points, 0);
   const [teamPoints, setTeamPoints] = useState(initialPoints);
-  // Since the team starts full, remainingPlayers should start empty
-  
+  const [remainingPlayers, setRemainingPlayers] = useState([]); // Fixed missing state
+  const [errorMessage, setErrorMessage] = useState(''); // Moved inside the component
+
   const navigate = useNavigate()
 
 
@@ -51,6 +53,13 @@ const TeamView = () => {
       });
 
       console.log("API Call Successful:", response.data);
+
+      console.log("API Call Successful:", errorMessage);
+      console.log("API Call Successful:", remainingPlayers);
+
+
+  
+
     } catch (error) {
       if (error.response) {
         console.log("Server Error:", error.response.data);
@@ -65,23 +74,9 @@ const TeamView = () => {
     setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
     setTeamPoints((prevPoints) => prevPoints - player.points);
     setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
-  };
 
-
-  return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl mb-4">Select Your Team</h2>
-
-      <div className="mb-4">
-        <h3 className="text-lg mb-2">{team.length}/11 Players Selected</h3>
-
-
-  return (
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    // Do not add the removed player back to remainingPlayers
-  };
+  
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
