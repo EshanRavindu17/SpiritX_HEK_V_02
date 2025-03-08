@@ -12,9 +12,6 @@ import TeamView from './pages/TeamView';
 
 //Eshan
 import BudgetView from './pages/BudgetView'
-import PlayersView from './pages/PlayersView';
-import SelectTeam from './pages/SelectTeam';
-import TeamView from './pages/TeamView';
 
 import EditPlayer from './components/EditPlayer'
 import LeaderboardView from './pages/LeaderboardView';

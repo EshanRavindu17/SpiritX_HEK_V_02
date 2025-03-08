@@ -20,13 +20,12 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
-  // Initialize the team with all available players (team is full initially)
   const [team, setTeam] = useState(availablePlayers);
-  // Calculate initial team points by summing all player points
   const initialPoints = availablePlayers.reduce((sum, player) => sum + player.points, 0);
   const [teamPoints, setTeamPoints] = useState(initialPoints);
-  // Since the team starts full, remainingPlayers should start empty
-  
+  const [remainingPlayers, setRemainingPlayers] = useState([]); // Fixed missing state
+  const [errorMessage, setErrorMessage] = useState(''); // Moved inside the component
+
   const navigate = useNavigate()
 
   const handleRemovePlayer = async (player) => {
@@ -46,6 +45,10 @@ const TeamView = () => {
       );
   
       console.log("API Call Successful:", response.data);
+      console.log("API Call Successful:", errorMessage);
+      console.log("API Call Successful:", remainingPlayers);
+
+
   
     } catch (error) {
       if (error.response) {
@@ -61,16 +64,8 @@ const TeamView = () => {
     setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
     setTeamPoints((prevPoints) => prevPoints - player.points);
     setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
-  };
   
-
-  return (
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    // Do not add the removed player back to remainingPlayers
-  };
-
+  }
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
       <ToastContainer

@@ -3,12 +3,10 @@ import { FiX } from "react-icons/fi";
 import axios from "axios";
 import image1 from "../assets/images/icon.png";
 
-
 const PlayersView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [activePlayer, setActivePlayer] = useState(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,10 +14,10 @@ const PlayersView = () => {
   const [battingAverage, setBattingAverage] = useState(0);
   const [bowlingStrikeRate, setBowlingStrikeRate] = useState(0);
   const [economyRate, setEconomyRate] = useState(0);
-  const [playerPoints, setPlayerPoints] = useState(0);
+  const [playerPoints, setPlayerPoints] = useState(0)
   const [playerValue, setPlayerValue] = useState(0);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(0);
 
-  const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
@@ -49,8 +47,8 @@ const PlayersView = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setIsDropdownOpen(!!event.target.value);
-  };
+        setIsDropdownOpen(!!event.target.value);
+      };
 
   const handleFilter = (event) => setSelectedUniversity(event.target.value);
   const handleViewStats = (player) => {
@@ -73,6 +71,9 @@ const PlayersView = () => {
   const closeStats = () => setActivePlayer(null);
 
   const filteredPlayers = useMemo(() => {
+    console.log(playerPoints)
+    console.log(isDropdownOpen)
+
     return players.filter((player) => {
       const matchesSearch =
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,6 +114,7 @@ const PlayersView = () => {
           ))}
         </select>
       </div>
+
       {loading ? (
         <p className="text-gray-400">Loading players...</p>
       ) : (
