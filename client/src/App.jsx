@@ -4,6 +4,11 @@ import Players from './components/Players'
 import Summary from './components/Summary'
 import AddPlayer from './components/AddPlayer'
 import PlayerStatistics from './components/PlayerStatistics'
+import Login from './pages/commonPages/Login'
+import PlayersView from './pages/PlayersView';
+import SelectTeam from './pages/SelectTeam';
+import TeamView from './pages/TeamView';
+
 
 //Eshan
 import BudgetView from './pages/BudgetView'
@@ -19,9 +24,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/fogot-password" element={<PlayersView />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
         <Route path="/teamview" element={<TeamView />} />
+
         <Route path="/budgetview" element={<BudgetView />} />
         <Route path="/leaderboardview" element={<LeaderboardView />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
