@@ -4,7 +4,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { api } from '../../axios.js';
 
-
 const availablePlayers = [
   { name: 'Player 1', university: 'University A', points: 50 },
   { name: 'Player 2', university: 'University B', points: 60 },
@@ -20,19 +19,16 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
-  // Initialize the team with all available players (team is full initially)
-  const [team, setTeam] = useState(availablePlayers);
-  // Calculate initial team points by summing all player points
-  const initialPoints = availablePlayers.reduce((sum, player) => sum + player.points, 0);
-  const [teamPoints, setTeamPoints] = useState(initialPoints);
-  // Since the team starts full, remainingPlayers should start empty
-  
-  const navigate = useNavigate()
+  const [team, setTeam] = useState(availablePlayers); // Initialize with available players
+  const [teamPoints, setTeamPoints] = useState(availablePlayers.reduce((sum, player) => sum + player.points, 0));
+  const [remainingPlayers, setRemainingPlayers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleRemovePlayer = async (player) => {
     try {
       // 🔐 Secure API call with JWT token
-      const jwtToken = localStorage.getItem('token'); 
+      const jwtToken = localStorage.getItem('token');
       console.log('jwt token:', jwtToken);
 
       const response = await api.get('/test', {
@@ -56,19 +52,6 @@ const TeamView = () => {
         setErrorMessage('Network error. Please try again.');
       }
     }
-  
-    // ✅ Update UI after API call
-    setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
-    setTeamPoints((prevPoints) => prevPoints - player.points);
-    setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
-  };
-  
-
-  return (
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    // Do not add the removed player back to remainingPlayers
   };
 
   return (
@@ -87,11 +70,6 @@ const TeamView = () => {
           </div>
         </div>
 
-        {/* Search & Filter Section (Simplified as Static Text) */}
-        <div className="flex flex-col md:flex-row md:space-x-4 mb-8 relative">
-          <div className="relative w-full md:w-2/3"></div>
-        </div>
-
         {/* Budget Overview Section (Adapted as Team Points) - Display only when team is full */}
         {team.length === 11 && (
           <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
@@ -102,9 +80,7 @@ const TeamView = () => {
             <div className="mt-4">
               <div className="w-full bg-gray-700 rounded-full h-2.5">
                 <div
-                  className={`h-2.5 rounded-full transition-all duration-500 ${
-                    teamPoints > 500 ? 'bg-green-600' : 'bg-green-600'
-                  }`}
+                  className={`h-2.5 rounded-full transition-all duration-500 ${teamPoints > 500 ? 'bg-green-600' : 'bg-green-600'}`}
                   style={{ width: `${(teamPoints / 1000) * 100}%` }} // Assuming max points ~1000 for demo
                 ></div>
               </div>
@@ -117,14 +93,13 @@ const TeamView = () => {
 
         {/* Available Players Section - Show Add Player Button only when team length < 11 */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
-          
           <div className="text-center item-center justify-center">
             <p className="text-white ">
               {team.length === 11 ? 'Team is full' : ''}
             </p>
             {team.length < 11 && (
               <button
-                onClick={()=>{navigate('/selectteam')}}
+                onClick={() => { navigate('/selectteam'); }}
                 className="bg-green-600 text-white py-4 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 aria-label="Add new player"
               >

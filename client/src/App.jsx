@@ -8,6 +8,7 @@ import Login from './pages/commonPages/Login'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 import TeamView from './pages/TeamView';
+import Home from './pages/Home'
 
 
 //Eshan
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/fogot-password" element={<PlayersView />} />
+        <Route path="/home" element={<Home/>} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
         <Route path="/teamview" element={<TeamView />} />
