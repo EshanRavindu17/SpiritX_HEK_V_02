@@ -8,7 +8,7 @@ import PlayerStatistics from './components/PlayerStatistics'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 
-import CreateTeam from './pages/CreateTeam';
+import TeamView from './pages/TeamView';
 
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
 
-        <Route path="/createteam" element={<CreateTeam />} />
+        <Route path="/teamview" element={<TeamView />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
           <Route index element={<Players/>}></Route>
           <Route path='tournament-summary' element={<Summary/>}></Route>
