@@ -6,28 +6,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const playerData = {
   Batters: [
-    { name: 'Rohit Sharma', university: 'Mumbai University', cost: 800000, stats: 'Avg: 45.3, SR: 135.2', category: 'Batters' },
-    { name: 'Virat Kohli', university: 'Delhi University', cost: 900000, stats: 'Avg: 50.1, SR: 137.8', category: 'Batters' },
-    { name: 'Shubman Gill', university: 'Punjab University', cost: 650000, stats: 'Avg: 42.9, SR: 130.6', category: 'Batters' },
-    { name: 'Suryakumar Yadav', university: 'Mumbai University', cost: 750000, stats: 'Avg: 38.5, SR: 145.2', category: 'Batters' },
-    { name: 'KL Rahul', university: 'Karnataka University', cost: 700000, stats: 'Avg: 47.2, SR: 132.4', category: 'Batters' },
-    { name: 'Ishan Kishan', university: 'Jharkhand University', cost: 600000, stats: 'Avg: 35.8, SR: 140.1', category: 'Batters' },
+    { name: 'Rohit Sharma', university: 'Mumbai University', cost: 800000, category: 'Batters' },
+    { name: 'Virat Kohli', university: 'Delhi University', cost: 900000, category: 'Batters' },
+    { name: 'Shubman Gill', university: 'Punjab University', cost: 650000, category: 'Batters' },
+    { name: 'Suryakumar Yadav', university: 'Mumbai University', cost: 750000, category: 'Batters' },
+    { name: 'KL Rahul', university: 'Karnataka University', cost: 700000, category: 'Batters' },
+    { name: 'Ishan Kishan', university: 'Jharkhand University', cost: 600000, category: 'Batters' },
   ],
   Bowlers: [
-    { name: 'Jasprit Bumrah', university: 'Gujarat University', cost: 850000, stats: 'Wickets: 32, Econ: 6.5', category: 'Bowlers' },
-    { name: 'Mohammed Shami', university: 'Bengal University', cost: 700000, stats: 'Wickets: 28, Econ: 7.1', category: 'Bowlers' },
-    { name: 'Yuzvendra Chahal', university: 'Rajasthan University', cost: 600000, stats: 'Wickets: 25, Econ: 7.8', category: 'Bowlers' },
-    { name: 'Arshdeep Singh', university: 'Punjab University', cost: 550000, stats: 'Wickets: 20, Econ: 7.4', category: 'Bowlers' },
-    { name: 'Ravichandran Ashwin', university: 'Tamil Nadu University', cost: 650000, stats: 'Wickets: 30, Econ: 6.9', category: 'Bowlers' },
-    { name: 'Kuldeep Yadav', university: 'Uttar Pradesh University', cost: 600000, stats: 'Wickets: 22, Econ: 7.3', category: 'Bowlers' },
+    { name: 'Jasprit Bumrah', university: 'Gujarat University', cost: 850000, category: 'Bowlers' },
+    { name: 'Mohammed Shami', university: 'Bengal University', cost: 700000, category: 'Bowlers' },
+    { name: 'Yuzvendra Chahal', university: 'Rajasthan University', cost: 600000, category: 'Bowlers' },
+    { name: 'Arshdeep Singh', university: 'Punjab University', cost: 550000, category: 'Bowlers' },
+    { name: 'Ravichandran Ashwin', university: 'Tamil Nadu University', cost: 650000, category: 'Bowlers' },
+    { name: 'Kuldeep Yadav', university: 'Uttar Pradesh University', cost: 600000, category: 'Bowlers' },
   ],
   'All-rounders': [
-    { name: 'Hardik Pandya', university: 'Gujarat University', cost: 900000, stats: 'Avg: 35.2, Wickets: 18', category: 'All-rounders' },
-    { name: 'Ravindra Jadeja', university: 'Saurashtra University', cost: 850000, stats: 'Avg: 32.8, Wickets: 20', category: 'All-rounders' },
-    { name: 'Ben Stokes', university: 'Durham University', cost: 950000, stats: 'Avg: 34.5, Wickets: 22', category: 'All-rounders' },
-    { name: 'Axar Patel', university: 'Gujarat University', cost: 700000, stats: 'Avg: 28.9, Wickets: 15', category: 'All-rounders' },
-    { name: 'Andre Russell', university: 'West Indies University', cost: 800000, stats: 'Avg: 30.2, Wickets: 17', category: 'All-rounders' },
-    { name: 'Shivam Dube', university: 'Mumbai University', cost: 600000, stats: 'Avg: 25.6, Wickets: 12', category: 'All-rounders' },
+    { name: 'Hardik Pandya', university: 'Gujarat University', cost: 900000, category: 'All-rounders' },
+    { name: 'Ravindra Jadeja', university: 'Saurashtra University', cost: 850000, category: 'All-rounders' },
+    { name: 'Ben Stokes', university: 'Durham University', cost: 950000, category: 'All-rounders' },
+    { name: 'Axar Patel', university: 'Gujarat University', cost: 700000, category: 'All-rounders' },
+    { name: 'Andre Russell', university: 'West Indies University', cost: 800000, category: 'All-rounders' },
+    { name: 'Shivam Dube', university: 'Mumbai University', cost: 600000, category: 'All-rounders' },
   ],
 };
 
@@ -306,7 +306,7 @@ const SelectTeamView = () => {
                   <div className="flex flex-col mb-4">
                     <span className="text-white text-lg font-semibold">{player.name}</span>
                     <span className="text-gray-400 text-sm">{player.university}</span>
-                    <span className="text-gray-400 text-sm">{player.stats}</span>
+                    {/* <span className="text-gray-400 text-sm">{player.stats}</span> */}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-yellow-400 font-bold">Rs. {player.cost.toLocaleString()}</span>

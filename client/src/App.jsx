@@ -9,7 +9,7 @@ import PlayerStatistics from './components/PlayerStatistics'
 import BudgetView from './pages/BudgetView'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
-import CreateTeam from './pages/CreateTeam';
+import CreateTeam from './pages/TeamView';
 import LeaderboardView from './pages/LeaderboardView';
 
 function App() {
