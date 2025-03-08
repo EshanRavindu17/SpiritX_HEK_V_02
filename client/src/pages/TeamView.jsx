@@ -19,30 +19,42 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
-  const [team, setTeam] = useState(availablePlayers); // Initialize with available players
-  const [teamPoints, setTeamPoints] = useState(availablePlayers.reduce((sum, player) => sum + player.points, 0));
-  const [remainingPlayers, setRemainingPlayers] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
+  const [team, setTeam] = useState([]);
+  const [teamPoints, setTeamPoints] = useState(0);
+  const [remainingPlayers, setRemainingPlayers] = useState(availablePlayers);
+  const [errorMessage, setErrorMessage] = useState(""); // ✅ Error message state
+
+  const handleAddPlayer = (player) => {
+    if (team.length < 11 && !team.find((p) => p.name === player.name)) {
+      setTeam([...team, player]);
+      setTeamPoints((prevPoints) => prevPoints + player.points);
+      setRemainingPlayers(remainingPlayers.filter((p) => p.name !== player.name));
+    }
+  };
+  // Initialize the team with all available players (team is full initially)
+
+  const [team, setTeam] = useState(availablePlayers);
+  const initialPoints = availablePlayers.reduce((sum, player) => sum + player.points, 0);
+  const [teamPoints, setTeamPoints] = useState(initialPoints);
+  const [remainingPlayers, setRemainingPlayers] = useState([]); // Fixed missing state
+  const [errorMessage, setErrorMessage] = useState(''); // Moved inside the component
+
+  const navigate = useNavigate()
 
   const handleRemovePlayer = async (player) => {
     try {
       // 🔐 Secure API call with JWT token
-      const jwtToken = localStorage.getItem('token');
-      console.log('jwt token:', jwtToken);
+      const jwtToken = localStorage.getItem("token"); 
 
-      const response = await api.get('/test', {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
+      const response = await api.get("/test", {
+        headers: { Authorization: `Bearer ${jwtToken}` },
       });
 
-      console.log('API Call Successful:', response.data);
+      console.log("API Call Successful:", response.data);
 
-      // ✅ Update UI after API call
-      setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
-      setTeamPoints((prevPoints) => prevPoints - player.points);
-      setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
+      console.log("API Call Successful:", errorMessage);
+      console.log("API Call Successful:", remainingPlayers);
+
     } catch (error) {
       if (error.response) {
         console.log('Server Error:', error.response.data);
@@ -52,7 +64,14 @@ const TeamView = () => {
         setErrorMessage('Network error. Please try again.');
       }
     }
-  };
+
+    // ✅ Update UI after API call
+    setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
+    setTeamPoints((prevPoints) => prevPoints - player.points);
+    setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
+
+  
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
@@ -70,7 +89,13 @@ const TeamView = () => {
           </div>
         </div>
 
+        {/* Search & Filter Section (Simplified as Static Text) */}
+        <div className="flex flex-col md:flex-row md:space-x-4 mb-8 relative">
+          <div className="relative w-full md:w-2/3"></div>
+        </div>
+
         {/* Budget Overview Section (Adapted as Team Points) - Display only when team is full */}
+
         {team.length === 11 && (
           <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
             <div className="flex flex-col md:flex-row justify-between items-center">
@@ -91,6 +116,17 @@ const TeamView = () => {
           </div>
         )}
 
+
+      {/* Display error message if any */}
+      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+
+      <div className="mb-4">
+        <h3 className="text-lg mb-2">Available Players</h3>
+        <ul>
+          {remainingPlayers.map((player) => (
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+
         {/* Available Players Section - Show Add Player Button only when team length < 11 */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
           <div className="text-center item-center justify-center">
@@ -98,6 +134,7 @@ const TeamView = () => {
               {team.length === 11 ? 'Team is full' : ''}
             </p>
             {team.length < 11 && (
+
               <button
                 onClick={() => { navigate('/selectteam'); }}
                 className="bg-green-600 text-white py-4 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -108,6 +145,29 @@ const TeamView = () => {
             )}
           </div>
         </div>
+
+
+      <div className="mt-4">
+        <h3 className="text-lg mb-2">Your Team</h3>
+        {team.length === 0 && <p>No players selected yet</p>}
+        <ul>
+          {team.map((player) => (
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+              <span>Points: {player.points}</span>
+              <button
+                onClick={() => handleRemovePlayer(player)}
+                className="bg-red-500 text-white py-1 px-3 rounded"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-4">
+        <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
 
         {/* Your Team Section */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
@@ -159,9 +219,11 @@ const TeamView = () => {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
 };
+
 
 export default TeamView;

@@ -59,7 +59,8 @@ const verifyUser = async (req, res, next) => {
         res.json({ 
           token: jwtToken,
           isAdmin: isAdmin ? true : false,
-          name 
+          name ,
+          id:uid
         });
     
     } catch (error) {
