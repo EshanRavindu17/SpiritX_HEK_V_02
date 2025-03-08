@@ -7,7 +7,9 @@ import PlayerStatistics from './components/PlayerStatistics'
 
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
+
 import CreateTeam from './pages/CreateTeam';
+
 
 function App() {
   
@@ -17,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
+
         <Route path="/createteam" element={<CreateTeam />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
           <Route index element={<Players/>}></Route>
@@ -24,6 +27,7 @@ function App() {
           <Route path='new-player' element={<AddPlayer/>}></Route>
           <Route path='player-statistics' element={<PlayerStatistics/>}></Route>
         </Route>
+
       </Routes>
     </BrowserRouter>
   )
