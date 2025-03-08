@@ -25,7 +25,7 @@ const SideBar = () => {
           ${isOpen ? 'translate-x-0' : '-translate-x-64'} md:translate-x-0 md:relative z-50 shadow-2xl font-poppins`}
       >
         <div className='bg-gradient-to-r from-purple-600 to-indigo-600 h-16 flex items-center justify-center shadow-md'>
-          <h3 className='text-2xl text-center font-bold text-white font-playfair'>Employee MS</h3>
+          <h3 className='text-2xl text-center font-bold text-white font-playfair'>SpritX Panel</h3>
         </div>
         <div className='px-4 py-4 space-y-2'>
           <NavLink

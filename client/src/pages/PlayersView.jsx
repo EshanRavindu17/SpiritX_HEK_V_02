@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
+import image1 from "../assets/images/icon.png";
+
 
 const players = [
   { name: "Virat Kohli", university: "University A", stats: "Player 1 stats here..." },
@@ -133,49 +135,33 @@ const PlayersView = () => {
           filteredPlayers.map((player, index) => (
             <li
               key={index}
-              className="relative bg-gradient-to-br from-[#1c2526] to-[#2a2e35] rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-4 flex flex-col justify-between min-h-[220px] overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="relative bg-[#1F2526] rounded-xl shadow-lg p-6 flex flex-col justify-between min-h-[200px] overflow-hidden"
             >
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-20 z-0"
-                style={{
-                  backgroundImage: `url(${player.imageUrl || 'https://via.placeholder.com/300x300?text=Player'})`,
-                }}
-              ></div>
-
-              <div className="relative z-10 flex items-start space-x-4 mb-3">
-                {/* Enlarged Circular Image Placeholder on the Left */}
-                <div className="w-24 h-24 rounded-full bg-gray-700 bg-opacity-50 border-2 border-blue-500 flex items-center justify-center shadow-lg">
-                  {player.imageUrl ? (
-                    <img
-                      src={player.imageUrl}
-                      alt={player.name}
-                      className="w-full h-full rounded-full object-cover"
-                      onError={(e) => (e.target.src = "https://via.placeholder.com/96?text=Player")}
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-xs uppercase">Upload</span>
-                  )}
-                </div>
+              <div className="relative z-10 flex items-start space-x-4 mb-4">
+                {/* Removed Player Image Section */}
+                <img
+                    src={image1}
+                    className='w-24 h-24 rounded-full   object-cover'
+                  />
 
                 {/* Text on the Right */}
                 <div className="flex-1 text-right">
-                  <span className="text-lg font-extrabold uppercase tracking-wider text-white drop-shadow-md">
+                  <span className="text-base font-bold uppercase tracking-wider text-white">
                     {player.name}
                   </span>
-                  <p className="text-xs text-gray-300 uppercase tracking-wide drop-shadow-sm">
+                  <p className="text-xs text-gray-400 uppercase tracking-wide mt-1">
                     {player.university}
                   </p>
                 </div>
               </div>
 
-              {/* Decorative element (inspired by fireworks) */}
-              <div className="relative z-10 mt-1 h-1 w-12 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto opacity-80"></div>
+              {/* Decorative Line */}
+              <div className="relative z-10 h-0.5 w-12 bg-blue-500 rounded-full mx-auto"></div>
 
               {/* View Stats Button */}
-              <div className="relative z-10 mt-auto">
+              <div className="relative z-10 mt-4">
                 <button
-                  className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 px-4 py-3 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-300 w-full shadow-md hover:shadow-lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl text-sm font-semibold uppercase tracking-wide w-full transition-colors duration-300"
                   onClick={() => handleViewStats(player)}
                   aria-label={`View stats for ${player.name}`}
                 >
@@ -194,13 +180,13 @@ const PlayersView = () => {
       {/* Stats Popup - Centered */}
       {activePlayer && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-30 transition-opacity duration-300">
-          <div className="bg-gradient-to-br from-[#1a2537] to-[#0d1b2a] bg-opacity-90 backdrop-blur-md p-6 rounded-2xl shadow-2xl w-full max-w-md relative transform transition-all duration-300 scale-100 hover:scale-105">
-            <h3 className="text-xl md:text-2xl font-bold uppercase tracking-widest mb-4 text-white drop-shadow-lg">
+          <div className="bg-[#1F2526] bg-opacity-90 backdrop-blur-md p-6 rounded-2xl shadow-2xl w-full max-w-md relative transform transition-all duration-300 scale-100 hover:scale-105">
+            <h3 className="text-xl md:text-2xl font-bold uppercase tracking-widest mb-4 text-white">
               {activePlayer.name} - Stats
             </h3>
             <p className="text-gray-300 text-sm md:text-base mb-6">{activePlayer.stats}</p>
             <button
-              className="bg-gradient-to-r from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition-all duration-300 w-full sm:w-auto shadow-md hover:shadow-lg"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-semibold uppercase tracking-wide transition-all duration-300 w-full sm:w-auto"
               onClick={closeStats}
               aria-label="Cancel and close popup"
             >

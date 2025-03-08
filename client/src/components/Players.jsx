@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import image1 from '../assets/images/profile.jpg';
+import image1 from '../assets/images/icon.png';
 import { useNavigate } from 'react-router-dom';
 
 const Players = () => {
