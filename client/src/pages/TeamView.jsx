@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../../axios.js';
 
-// Sample player data (add points to each player)
+// Sample player data
 const availablePlayers = [
   { name: 'Player 1', university: 'University A', points: 50 },
   { name: 'Player 2', university: 'University B', points: 60 },
@@ -14,18 +14,18 @@ const availablePlayers = [
   { name: 'Player 9', university: 'University I', points: 85 },
   { name: 'Player 10', university: 'University J', points: 90 },
   { name: 'Player 11', university: 'University K', points: 60 },
-  // Add more players as needed
 ];
 
 const TeamView = () => {
   const [team, setTeam] = useState([]);
   const [teamPoints, setTeamPoints] = useState(0);
   const [remainingPlayers, setRemainingPlayers] = useState(availablePlayers);
+  const [errorMessage, setErrorMessage] = useState(""); // ✅ Error message state
 
   const handleAddPlayer = (player) => {
     if (team.length < 11 && !team.find((p) => p.name === player.name)) {
       setTeam([...team, player]);
-      setTeamPoints(teamPoints + player.points);
+      setTeamPoints((prevPoints) => prevPoints + player.points);
       setRemainingPlayers(remainingPlayers.filter((p) => p.name !== player.name));
     }
   };
@@ -34,20 +34,12 @@ const TeamView = () => {
     try {
       // 🔐 Secure API call with JWT token
       const jwtToken = localStorage.getItem("token"); 
-      console.log("jwt token 444444444:",jwtToken)
 
-      const response = await api.get(
-        "/test",
-       
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`, // Consider using cookies instead of localStorage
-          },
-        }
-      );
-  
+      const response = await api.get("/test", {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+
       console.log("API Call Successful:", response.data);
-  
     } catch (error) {
       if (error.response) {
         console.log("Server Error:", error.response.data);
@@ -57,31 +49,26 @@ const TeamView = () => {
         setErrorMessage("Network error. Please try again.");
       }
     }
-  
+
     // ✅ Update UI after API call
     setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
     setTeamPoints((prevPoints) => prevPoints - player.points);
     setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
   };
-  
 
   return (
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    setRemainingPlayers([...remainingPlayers, player]);
-  };
-
-  return (
-
     <div className="container mx-auto p-4">
       <h2 className="text-2xl mb-4">Select Your Team</h2>
+
       <div className="mb-4">
         <h3 className="text-lg mb-2">{team.length}/11 Players Selected</h3>
         {team.length === 11 && (
           <h4 className="text-green-500">Team is complete! Total Points: {teamPoints}</h4>
         )}
       </div>
+
+      {/* Display error message if any */}
+      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
 
       <div className="mb-4">
         <h3 className="text-lg mb-2">Available Players</h3>
@@ -110,7 +97,6 @@ const TeamView = () => {
               <span>Points: {player.points}</span>
               <button
                 onClick={() => handleRemovePlayer(player)}
-
                 className="bg-red-500 text-white py-1 px-3 rounded"
               >
                 Remove
@@ -119,18 +105,12 @@ const TeamView = () => {
           ))}
         </ul>
       </div>
+
       <div className="mt-4">
         <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
       </div>
-      {team.length === 11 && (
-        <div className="mt-4">
-          <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
-        </div>
-      )}
-
     </div>
   );
 };
 
 export default TeamView;
-

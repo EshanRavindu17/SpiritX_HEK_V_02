@@ -15,7 +15,16 @@ const ForgotPassword = () => {
     setMessage('');
 
     try {
-      const response = await api.post('/verify-user-role', { email });
+      const jwtToken = localStorage.getItem("token");
+
+      const response = await api.post(
+        "/forgot-password",
+        { email },
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      
 
       if (response.data.success) {
         try {

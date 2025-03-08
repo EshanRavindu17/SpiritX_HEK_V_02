@@ -8,13 +8,11 @@ import Login from './pages/commonPages/Login'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 import TeamView from './pages/TeamView';
+import ForgotPassword from './pages/commonPages/FogotPassword';
 
 
 //Eshan
 import BudgetView from './pages/BudgetView'
-import PlayersView from './pages/PlayersView';
-import SelectTeam from './pages/SelectTeam';
-import TeamView from './pages/TeamView';
 
 import EditPlayer from './components/EditPlayer'
 import LeaderboardView from './pages/LeaderboardView';
@@ -25,7 +23,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/fogot-password" element={<PlayersView />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
         <Route path="/teamview" element={<TeamView />} />
