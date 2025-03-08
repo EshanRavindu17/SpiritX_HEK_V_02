@@ -4,7 +4,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { api } from '../../axios.js';
 
-
 const availablePlayers = [
   { name: 'Player 1', university: 'University A', points: 50 },
   { name: 'Player 2', university: 'University B', points: 60 },
@@ -20,6 +19,18 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
+  const [team, setTeam] = useState([]);
+  const [teamPoints, setTeamPoints] = useState(0);
+  const [remainingPlayers, setRemainingPlayers] = useState(availablePlayers);
+  const [errorMessage, setErrorMessage] = useState(""); // ✅ Error message state
+
+  const handleAddPlayer = (player) => {
+    if (team.length < 11 && !team.find((p) => p.name === player.name)) {
+      setTeam([...team, player]);
+      setTeamPoints((prevPoints) => prevPoints + player.points);
+      setRemainingPlayers(remainingPlayers.filter((p) => p.name !== player.name));
+    }
+  };
   // Initialize the team with all available players (team is full initially)
   const [team, setTeam] = useState(availablePlayers);
   // Calculate initial team points by summing all player points
@@ -29,24 +40,17 @@ const TeamView = () => {
   
   const navigate = useNavigate()
 
+
   const handleRemovePlayer = async (player) => {
     try {
       // 🔐 Secure API call with JWT token
       const jwtToken = localStorage.getItem("token"); 
-      console.log("jwt token 444444444:",jwtToken)
 
-      const response = await api.get(
-        "/test",
-       
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`, // Consider using cookies instead of localStorage
-          },
-        }
-      );
-  
+      const response = await api.get("/test", {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+
       console.log("API Call Successful:", response.data);
-  
     } catch (error) {
       if (error.response) {
         console.log("Server Error:", error.response.data);
@@ -56,13 +60,21 @@ const TeamView = () => {
         setErrorMessage("Network error. Please try again.");
       }
     }
-  
+
     // ✅ Update UI after API call
     setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
     setTeamPoints((prevPoints) => prevPoints - player.points);
     setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
   };
-  
+
+
+  return (
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl mb-4">Select Your Team</h2>
+
+      <div className="mb-4">
+        <h3 className="text-lg mb-2">{team.length}/11 Players Selected</h3>
+
 
   return (
   const handleRemovePlayer = (player) => {
@@ -93,6 +105,7 @@ const TeamView = () => {
         </div>
 
         {/* Budget Overview Section (Adapted as Team Points) - Display only when team is full */}
+
         {team.length === 11 && (
           <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
             <div className="flex flex-col md:flex-row justify-between items-center">
@@ -115,6 +128,17 @@ const TeamView = () => {
           </div>
         )}
 
+
+      {/* Display error message if any */}
+      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+
+      <div className="mb-4">
+        <h3 className="text-lg mb-2">Available Players</h3>
+        <ul>
+          {remainingPlayers.map((player) => (
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+
         {/* Available Players Section - Show Add Player Button only when team length < 11 */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
           
@@ -123,6 +147,7 @@ const TeamView = () => {
               {team.length === 11 ? 'Team is full' : ''}
             </p>
             {team.length < 11 && (
+
               <button
                 onClick={()=>{navigate('/selectteam')}}
                 className="bg-green-600 text-white py-4 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -133,6 +158,29 @@ const TeamView = () => {
             )}
           </div>
         </div>
+
+
+      <div className="mt-4">
+        <h3 className="text-lg mb-2">Your Team</h3>
+        {team.length === 0 && <p>No players selected yet</p>}
+        <ul>
+          {team.map((player) => (
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+              <span>Points: {player.points}</span>
+              <button
+                onClick={() => handleRemovePlayer(player)}
+                className="bg-red-500 text-white py-1 px-3 rounded"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-4">
+        <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
 
         {/* Your Team Section */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
@@ -184,9 +232,14 @@ const TeamView = () => {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
 };
 
+
 export default TeamView;
+
+export default TeamView;
+
