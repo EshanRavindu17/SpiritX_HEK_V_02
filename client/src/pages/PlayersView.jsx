@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
+import image1 from "../assets/images/icon.png";
+
 
 const players = [
   { name: "Virat Kohli", university: "University A", stats: "Player 1 stats here..." },
@@ -137,6 +139,10 @@ const PlayersView = () => {
             >
               <div className="relative z-10 flex items-start space-x-4 mb-4">
                 {/* Removed Player Image Section */}
+                <img
+                    src={image1}
+                    className='w-24 h-24 rounded-full   object-cover'
+                  />
 
                 {/* Text on the Right */}
                 <div className="flex-1 text-right">
