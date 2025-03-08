@@ -4,6 +4,7 @@ import cors from "cors";
  import authTest from "./routes/authTest.js";
 // import adminRouter from "./routes/adminRouter.js";
 // import liveRouter from "./routes/liveRouter.js";
+import adminRouter from "./routes/adminRouter.js";
 
 import dotenv from "dotenv";
 import { auth } from "./config/firebaseAdmin.js"; // dont remove this
@@ -20,6 +21,8 @@ app.use(express.json());
 // app.use("/api/admin", adminRouter);
 
 // app.use("/api", liveRouter);
+
+app.use('/api/admin',adminRouter)
 
 const port = process.env.PORT;
 

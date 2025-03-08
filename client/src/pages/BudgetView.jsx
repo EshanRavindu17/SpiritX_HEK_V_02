@@ -3,44 +3,26 @@ import { FiX } from 'react-icons/fi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-const playerData = {
-  Batters: [
-    { name: 'Rohit Sharma', university: 'Mumbai University', cost: 800000, category: 'Batters' },
-    { name: 'Virat Kohli', university: 'Delhi University', cost: 900000, category: 'Batters' },
-    { name: 'Shubman Gill', university: 'Punjab University', cost: 650000, category: 'Batters' },
-    { name: 'Suryakumar Yadav', university: 'Mumbai University', cost: 750000, category: 'Batters' },
-    { name: 'KL Rahul', university: 'Karnataka University', cost: 700000, category: 'Batters' },
-    { name: 'Ishan Kishan', university: 'Jharkhand University', cost: 600000, category: 'Batters' },
-  ],
-  Bowlers: [
-    { name: 'Jasprit Bumrah', university: 'Gujarat University', cost: 850000, category: 'Bowlers' },
-    { name: 'Mohammed Shami', university: 'Bengal University', cost: 700000, category: 'Bowlers' },
-    { name: 'Yuzvendra Chahal', university: 'Rajasthan University', cost: 600000, category: 'Bowlers' },
-    { name: 'Arshdeep Singh', university: 'Punjab University', cost: 550000, category: 'Bowlers' },
-    { name: 'Ravichandran Ashwin', university: 'Tamil Nadu University', cost: 650000, category: 'Bowlers' },
-    { name: 'Kuldeep Yadav', university: 'Uttar Pradesh University', cost: 600000, category: 'Bowlers' },
-  ],
-  'All-rounders': [
-    { name: 'Hardik Pandya', university: 'Gujarat University', cost: 900000, category: 'All-rounders' },
-    { name: 'Ravindra Jadeja', university: 'Saurashtra University', cost: 850000, category: 'All-rounders' },
-    { name: 'Ben Stokes', university: 'Durham University', cost: 950000, category: 'All-rounders' },
-    { name: 'Axar Patel', university: 'Gujarat University', cost: 700000, category: 'All-rounders' },
-    { name: 'Andre Russell', university: 'West Indies University', cost: 800000, category: 'All-rounders' },
-    { name: 'Shivam Dube', university: 'Mumbai University', cost: 600000, category: 'All-rounders' },
-  ],
-};
-
-// Sample categories
-const categories = ['Batters', 'Bowlers', 'All-rounders'];
+// Sample player data
+const availablePlayers = [
+  { name: 'Player 1', university: 'University A', cost: 500000 },
+  { name: 'Player 2', university: 'University B', cost: 600000 },
+  { name: 'Player 3', university: 'University C', cost: 550000 },
+  { name: 'Player 4', university: 'University D', cost: 700000 },
+  { name: 'Player 5', university: 'University E', cost: 800000 },
+  { name: 'Player 6', university: 'University F', cost: 650000 },
+  { name: 'Player 7', university: 'University G', cost: 500000 },
+  { name: 'Player 8', university: 'University H', cost: 750000 },
+  { name: 'Player 9', university: 'University I', cost: 850000 },
+  { name: 'Player 10', university: 'University J', cost: 900000 },
+  { name: 'Player 11', university: 'University K', cost: 600000 },
+];
 
 const initialBudget = 9000000; // Rs.9,000,000
-const maxTeamSize = 11; // Maximum number of players allowed
 
-const SelectTeamView = () => {
+const BudgetView = () => {
   const [team, setTeam] = useState([]);
   const [budget, setBudget] = useState(initialBudget);
-  const [selectedCategory, setSelectedCategory] = useState('Batters');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -51,8 +33,7 @@ const SelectTeamView = () => {
 
   // Memoized filtered players for performance
   const filteredPlayers = useMemo(() => {
-    const playersInCategory = playerData[selectedCategory] || [];
-    return playersInCategory.filter((player) => {
+    return availablePlayers.filter((player) => {
       const matchesSearch =
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         player.university.toLowerCase().includes(searchTerm.toLowerCase());
@@ -62,20 +43,12 @@ const SelectTeamView = () => {
       const notInTeam = !team.find((p) => p.name === player.name); // Exclude players already in team
       return matchesSearch && matchesUniversity && notInTeam;
     });
-  }, [searchTerm, selectedUniversity, selectedCategory, team]);
-
-  // Calculate category counts
-  const categoryCounts = useMemo(() => {
-    return categories.reduce((acc, category) => {
-      acc[category] = team.filter((player) => player.category === category).length;
-      return acc;
-    }, {});
-  }, [team]);
+  }, [searchTerm, selectedUniversity, team]);
 
   // Handle adding a player to the team
   const handleAddPlayer = (player) => {
-    if (team.length >= maxTeamSize) {
-      toast.error(`Team is full! Maximum ${maxTeamSize} players allowed.`);
+    if (team.length >= 11) {
+      toast.error('Team is full! Maximum 11 players allowed.');
       return;
     }
     if (team.find((p) => p.name === player.name)) {
@@ -102,7 +75,7 @@ const SelectTeamView = () => {
     if (showConfirmDialog) {
       setTeam(team.filter((p) => p.name !== showConfirmDialog.name));
       setBudget(budget + showConfirmDialog.cost);
-      toast.error(`${showConfirmDialog.name} removed from your team.`);
+      toast.error(`${showConfirmDialog.name} removed from your team.`); // Changed to toast.error for red color
       setShowConfirmDialog(null);
     }
   };
@@ -128,19 +101,6 @@ const SelectTeamView = () => {
   // Handle university filter
   const handleFilter = (event) => setSelectedUniversity(event.target.value);
 
-  // Handle category change
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    setSearchTerm(''); // Clear search term when changing category
-    setIsDropdownOpen(false); // Close dropdown
-  };
-
-  // Handle team submission
-  const handleSubmitTeam = () => {
-    toast.success('Team submitted successfully!');
-    // Add further logic here (e.g., API call, redirect, etc.)
-  };
-
   // Close dropdown if clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -160,47 +120,20 @@ const SelectTeamView = () => {
   // Calculate budget usage percentage for progress bar
   const budgetUsagePercentage = ((initialBudget - budget) / initialBudget) * 100;
 
-  // Get all universities for the filter dropdown
-  const allUniversities = useMemo(() => {
-    const universities = new Set();
-    Object.values(playerData).flat().forEach((player) => universities.add(player.university));
-    return Array.from(universities);
-  }, []);
-
-  // Team completeness status
-  const teamCompleteness = `${team.length}/${maxTeamSize} players selected`;
-
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
+    <div className="bg-gradient-to-l from-gray-300 via-gray-600 to-black min-h-screen p-4 md:p-8">
       <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
-        aria-live="polite"
+        aria-live="polite" // Improve accessibility
       />
       <div className="container mx-auto max-w-6xl bg-transparent">
         {/* Header Section */}
         <div className="text-center mb-8 md:mb-10">
           <h2 className="text-3xl md:text-5xl font-bold text-white tracking-wider">
-            Manage Your Fantasy Team
+            Manage Your Fantasy Team Budget
           </h2>
-        </div>
-
-        {/* Category Selector */}
-        <div className="mb-6 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
-          {categories.map((category, index) => (
-            <button
-              key={index}
-              onClick={() => handleCategoryChange(category)}
-              className={`px-4 py-2 md:px-6 md:py-2 text-sm md:text-lg font-semibold rounded-full transition duration-300 ease-in-out 
-                ${selectedCategory === category 
-                  ? 'bg-indigo-600 text-white shadow-lg transform scale-110' 
-                  : 'bg-gray-200 text-gray-800 hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400'}`}
-              aria-label={`Select ${category} category`}
-            >
-              {category}
-            </button>
-          ))}
         </div>
 
         {/* Search & Filter Section */}
@@ -208,8 +141,8 @@ const SelectTeamView = () => {
           <div className="relative w-full md:w-2/3">
             <input
               type="text"
-              placeholder={`Search ${selectedCategory}`}
-              aria-label={`Search ${selectedCategory} by name or university`}
+              placeholder="Search Players"
+              aria-label="Search players by name or university"
               className="p-4 w-full bg-gray-800 text-white bg-opacity-90 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm uppercase tracking-wide placeholder-gray-400 transition-all duration-300"
               value={searchTerm}
               onChange={handleSearch}
@@ -247,7 +180,7 @@ const SelectTeamView = () => {
             aria-label="Filter by university"
           >
             <option value="">All Universities</option>
-            {allUniversities.map((university) => (
+            {Array.from(new Set(availablePlayers.map((p) => p.university))).map((university) => (
               <option key={university} value={university}>
                 {university}
               </option>
@@ -293,7 +226,7 @@ const SelectTeamView = () => {
 
         {/* Available Players Section */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
-          <h3 className="text-xl md:text-2xl text-gray-200 mb-4">Available {selectedCategory}</h3>
+          <h3 className="text-xl md:text-2xl text-gray-200 mb-4">Available Players</h3>
           {filteredPlayers.length === 0 ? (
             <p className="text-gray-500">No players available based on current filters</p>
           ) : (
@@ -306,7 +239,6 @@ const SelectTeamView = () => {
                   <div className="flex flex-col mb-4">
                     <span className="text-white text-lg font-semibold">{player.name}</span>
                     <span className="text-gray-400 text-sm">{player.university}</span>
-                    {/* <span className="text-gray-400 text-sm">{player.stats}</span> */}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-yellow-400 font-bold">Rs. {player.cost.toLocaleString()}</span>
@@ -326,42 +258,17 @@ const SelectTeamView = () => {
 
         {/* Your Team Section */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-xl md:text-2xl text-gray-200">Your Team</h3>
-                <span className="text-sm md:text-lg text-yellow-400 font-semibold bg-gray-800 px-2 py-1 rounded-full">
-                  {teamCompleteness}
-                </span>
-              </div>
-              <div className="text-sm md:text-base text-gray-400">
-                {categories.map((category) => (
-                  <span key={category} className="mr-4">
-                    {category}: {categoryCounts[category]}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="mt-2 md:mt-0 flex space-x-4">
-              {team.length > 0 && (
-                <button
-                  onClick={handleClearTeam}
-                  className="bg-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
-                  aria-label="Clear team"
-                >
-                  Clear Team
-                </button>
-              )}
-              {team.length === maxTeamSize && (
-                <button
-                  onClick={handleSubmitTeam}
-                  className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  aria-label="Submit team"
-                >
-                  Submit Team
-                </button>
-              )}
-            </div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl md:text-2xl text-gray-200">Your Team</h3>
+            {team.length > 0 && (
+              <button
+                onClick={handleClearTeam}
+                className="bg-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+                aria-label="Clear team"
+              >
+                Clear Team
+              </button>
+            )}
           </div>
           {team.length === 0 ? (
             <p className="text-gray-500">No players selected yet</p>
@@ -372,10 +279,8 @@ const SelectTeamView = () => {
                   key={player.name}
                   className="flex flex-col md:flex-row justify-between items-center bg-gray-700 p-4 rounded-xl hover:bg-gray-600 transition duration-300"
                 >
-                  <div className="flex flex-col mb-2 md:mb-0">
-                    <span className="text-white font-medium">{player.name} ({player.category})</span>
-                    <span className="text-gray-400 text-sm">{player.university}</span>
-                    <span className="text-gray-400 text-sm">{player.stats}</span>
+                  <div className="text-white font-medium mb-2 md:mb-0">
+                    {player.name} - {player.university}
                   </div>
                   <div className="flex items-center space-x-4">
                     <span className="text-yellow-400 font-bold">Rs. {player.cost.toLocaleString()}</span>
@@ -425,4 +330,4 @@ const SelectTeamView = () => {
   );
 };
 
-export default SelectTeamView;
+export default BudgetView;

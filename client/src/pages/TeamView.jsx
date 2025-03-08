@@ -66,6 +66,14 @@ const TeamView = () => {
   
 
   return (
+  const handleRemovePlayer = (player) => {
+    setTeam(team.filter((p) => p.name !== player.name));
+    setTeamPoints(teamPoints - player.points);
+    setRemainingPlayers([...remainingPlayers, player]);
+  };
+
+  return (
+
     <div className="container mx-auto p-4">
       <h2 className="text-2xl mb-4">Select Your Team</h2>
       <div className="mb-4">
@@ -102,7 +110,8 @@ const TeamView = () => {
               <span>Points: {player.points}</span>
               <button
                 onClick={() => handleRemovePlayer(player)}
-                className="bg-green-700 text-white py-1 px-3 rounded"
+
+                className="bg-red-500 text-white py-1 px-3 rounded"
               >
                 Remove
               </button>
@@ -110,12 +119,18 @@ const TeamView = () => {
           ))}
         </ul>
       </div>
-
       <div className="mt-4">
         <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
       </div>
+      {team.length === 11 && (
+        <div className="mt-4">
+          <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
+        </div>
+      )}
+
     </div>
   );
 };
 
 export default TeamView;
+
