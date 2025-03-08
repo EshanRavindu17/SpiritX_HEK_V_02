@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaUser, FaRunning, FaBaseballBall, FaCheck } from 'react-icons/fa';
 
 const AddPlayer = () => {
   const [playerData, setPlayerData] = useState({
@@ -21,54 +22,60 @@ const AddPlayer = () => {
   };
 
   return (
-    <div className='flex-1 p-6 md:p-8 bg-gray-100 min-h-screen'>
-      <h2 className='text-3xl font-bold text-gray-800 mb-6 font-poppins'>Add New Player</h2>
-      <form onSubmit={handleSubmit} className='bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto space-y-4'>
-        {/* Player Name */}
-        <div>
-          <label className='block text-gray-700 font-medium'>Player Name</label>
-          <input
-            type='text'
-            name='name'
-            value={playerData.name}
-            onChange={handleChange}
-            className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600'
-            required
-          />
-        </div>
+    <div className='flex-1 p-6 md:p-8 bg-gradient-to-br from-gray-100 to-gray-300 min-h-screen flex items-center justify-center'>
+      <div className='bg-white p-8 rounded-2xl shadow-xl max-w-xl w-full'>
+        <h2 className='text-4xl flex justify-center gap-4 items-center font-bold text-gray-800 mb-6 text-center font-poppins'>
+          <FaUser className='inline-block text-purple-600' /> Add New Player
+        </h2>
+        <form onSubmit={handleSubmit} className='space-y-6'>
+          {/* Player Name */}
+          <div>
+            <label className='block text-gray-700 font-medium text-lg'>Player Name</label>
+            <input
+              type='text'
+              name='name'
+              value={playerData.name}
+              onChange={handleChange}
+              className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600'
+              placeholder='Enter player name'
+              required
+            />
+          </div>
 
-        {/* Stats Fields in Two Columns */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          {[
-            { label: 'Total Runs', name: 'totalRuns' },
-            { label: 'Balls Faced', name: 'ballsFaced' },
-            { label: 'Innings Played', name: 'inningsPlayed' },
-            { label: 'Wickets', name: 'wickets' },
-            { label: 'Overs Bowled', name: 'oversBowled' },
-            { label: 'Runs Conceded', name: 'runsConceded' },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className='block text-gray-700 font-medium'>{field.label}</label>
-              <input
-                type='number'
-                name={field.name}
-                value={playerData[field.name]}
-                onChange={handleChange}
-                className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600'
-                required
-              />
-            </div>
-          ))}
-        </div>
+          {/* Stats Fields in Two Columns */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {[
+              { label: 'Total Runs', name: 'totalRuns', icon: <FaRunning className='text-purple-600' /> },
+              { label: 'Balls Faced', name: 'ballsFaced', icon: <FaBaseballBall className='text-purple-600' /> },
+              { label: 'Innings Played', name: 'inningsPlayed', icon: <FaRunning className='text-purple-600' /> },
+              { label: 'Wickets', name: 'wickets', icon: <FaBaseballBall className='text-purple-600' /> },
+              { label: 'Overs Bowled', name: 'oversBowled', icon: <FaRunning className='text-purple-600' /> },
+              { label: 'Runs Conceded', name: 'runsConceded', icon: <FaBaseballBall className='text-purple-600' /> },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className='block text-gray-700 font-medium text-lg'>{field.icon} {field.label}</label>
+                <input
+                  type='number'
+                  name={field.name}
+                  value={playerData[field.name]}
+                  onChange={handleChange}
+                  className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600'
+                  placeholder={`Enter ${field.label.toLowerCase()}`}
+                  required
+                />
+              </div>
+            ))}
+          </div>
 
-        {/* Submit Button */}
-        <button
-          type='submit'
-          className='w-full bg-purple-600 text-white py-2 rounded-md font-semibold hover:bg-purple-700 transition-all'
-        >
-          Add Player
-        </button>
-      </form>
+          {/* Submit Button */}
+          <button
+            type='submit'
+            className='w-full bg-purple-600 text-white py-3 rounded-lg font-semibold flex justify-center items-center space-x-2 hover:bg-purple-700 transition-all text-lg'
+          >
+            <FaCheck /> <span>Add new Player</span>
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
