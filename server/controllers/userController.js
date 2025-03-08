@@ -118,5 +118,102 @@ const submitTeam = async (req, res) => {
 
 
 
+const getTeam = async (req, res) => {
+    try {
+        // Assuming the owner's ID is passed in the request body or as a query parameter
+        const  ownerId  = req.params; // Adjust based on how you send the owner ID (e.g., req.query.ownerId or req.user.id if using auth middleware)
+        console.log("ownerId:", ownerId.id);
+        if (!ownerId) {
+            return res.status(400).json({
+                success: false,
+                message: "Owner ID is required",
+            });
+        }
 
-export { getPlayers,getfilterplayers ,submitTeam};
+        if (!db) {
+            throw new Error("Firestore database not initialized");
+        }
+
+        // Fetch the team document for the given owner
+        const teamSnapshot = await db.collection("teams")
+            .where("owner", "==", ownerId.id)
+            .limit(1) // Assuming each owner has only one team
+            .get();
+
+            
+        if (teamSnapshot.empty) {
+            return res.status(404).json({
+                success: false,
+                message: "No team found for this owner",
+            });
+        }
+
+        // Get the first (and assumed only) team document
+        const teamDoc = teamSnapshot.docs[0];
+        const teamData = teamDoc.data();
+        const playerIds = teamData.players; // Array of 11 player IDs
+
+        if (!Array.isArray(playerIds) || playerIds.length !== 11) {
+            return res.status(400).json({
+                success: false,
+                message: "Team must contain exactly 11 player IDs",
+            });
+        }
+
+        // Fetch player details for all 11 player IDs
+        const playerPromises = playerIds.map(async (playerId) => {
+            const playerDoc = await db.collection("players").doc(playerId).get();
+            if (!playerDoc.exists) {
+                throw new Error(`Player with ID ${playerId} not found`);
+            }
+            const playerData = playerDoc.data();
+            return {
+                id: playerId,
+                name: playerData.name,
+                university: playerData.university,
+                points: calculatePlayerPoints(playerData), // Calculate points dynamically
+            };
+        });
+
+        // Resolve all player data promises
+        const players = await Promise.all(playerPromises);
+
+        // Return the team with enriched player data
+        res.status(200).json({
+            success: true,
+            team: {
+                id: teamDoc.id,
+                players: players,
+                owner: ownerId,
+            },
+        });
+    } catch (error) {
+        console.error("Error fetching team:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch team",
+            error: error.message,
+        });
+    }
+};
+
+// Helper function to calculate player points (adjust based on your logic)
+const calculatePlayerPoints = (player) => {
+    const battingStrikeRate = player.ballsFaced > 0 ? (player.totalRuns / player.ballsFaced) * 100 : 0;
+    const battingAverage = player.inningsPlayed > 0 ? player.totalRuns / player.inningsPlayed : 0;
+    const bowlingStrikeRate = player.wickets > 0 ? (player.oversBowled * 6) / player.wickets : Infinity;
+    const economyRate = player.oversBowled > 0 ? (player.runsConceded / (player.oversBowled * 6)) * 6 : Infinity;
+
+    const points = 
+        (battingStrikeRate / 5) +
+        (battingAverage * 0.8) +
+        (bowlingStrikeRate === Infinity ? 0 : 500 / bowlingStrikeRate) +
+        (economyRate === Infinity ? 0 : 140 / economyRate);
+
+    return Math.round(points); // Adjust rounding or formula as needed
+};
+
+
+
+
+export { getPlayers,getfilterplayers ,submitTeam,getTeam};
