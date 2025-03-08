@@ -9,7 +9,7 @@ import PlayerStatistics from './components/PlayerStatistics'
 import BudgetView from './pages/BudgetView'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
-import CreateTeam from './pages/TeamView';
+import TeamView from './pages/TeamView';
 import LeaderboardView from './pages/LeaderboardView';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
-        <Route path="/createteam" element={<CreateTeam />} />
+        <Route path="/createteam" element={<TeamView />} />
         <Route path="/budgetview" element={<BudgetView />} />
         <Route path="/leaderboardview" element={<LeaderboardView />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
