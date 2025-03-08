@@ -81,9 +81,11 @@ const TeamView = () => {
         </ul>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
-      </div>
+      {team.length === 11 && (
+        <div className="mt-4">
+          <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
+        </div>
+      )}
     </div>
   );
 };
