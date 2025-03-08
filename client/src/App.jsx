@@ -19,7 +19,7 @@ function App() {
       <Routes>
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
-        <Route path="/createteam" element={<TeamView />} />
+        <Route path="/teamview" element={<TeamView />} />
         <Route path="/budgetview" element={<BudgetView />} />
         <Route path="/leaderboardview" element={<LeaderboardView />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
