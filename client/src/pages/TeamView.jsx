@@ -65,12 +65,12 @@ const TeamView = () => {
   };
   
 
-  return (
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    setRemainingPlayers([...remainingPlayers, player]);
-  };
+  // return (
+  // const handleRemovePlayer = (player) => {
+  //   setTeam(team.filter((p) => p.name !== player.name));
+  //   setTeamPoints(teamPoints - player.points);
+  //   setRemainingPlayers([...remainingPlayers, player]);
+  // };
 
   return (
 
