@@ -1,0 +1,39 @@
+/* src/styles/leaderboard.css */
+
+/* Custom styles for the leaderboard container */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-cyan-500 {
+  scrollbar-color: #06b6d4 #1f2937;
+}
+
+.scrollbar-track-gray-900 {
+  /* Firefox */
+}
+
+/* Webkit (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #06b6d4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+/* Ensure the Logged-in User Block is positioned at the bottom-right */
+.logged-in-user-block {
+  position: absolute;
+  bottom: 10%;
+  right: 5%;
+  background-color: #fbbf24;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
