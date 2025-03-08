@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { api } from '../../axios.js';
+
 
 const availablePlayers = [
   { name: 'Player 1', university: 'University A', points: 50 },
@@ -27,6 +29,42 @@ const TeamView = () => {
   
   const navigate = useNavigate()
 
+  const handleRemovePlayer = async (player) => {
+    try {
+      // 🔐 Secure API call with JWT token
+      const jwtToken = localStorage.getItem("token"); 
+      console.log("jwt token 444444444:",jwtToken)
+
+      const response = await api.get(
+        "/test",
+       
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Consider using cookies instead of localStorage
+          },
+        }
+      );
+  
+      console.log("API Call Successful:", response.data);
+  
+    } catch (error) {
+      if (error.response) {
+        console.log("Server Error:", error.response.data);
+        setErrorMessage(error.response.data.message || "Something went wrong. Please try again.");
+      } else {
+        console.log("Client Error:", error.message);
+        setErrorMessage("Network error. Please try again.");
+      }
+    }
+  
+    // ✅ Update UI after API call
+    setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
+    setTeamPoints((prevPoints) => prevPoints - player.points);
+    setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
+  };
+  
+
+  return (
   const handleRemovePlayer = (player) => {
     setTeam(team.filter((p) => p.name !== player.name));
     setTeamPoints(teamPoints - player.points);
@@ -134,6 +172,7 @@ const TeamView = () => {
               ))}
             </div>
           )}
+
         </div>
 
         {/* Total Points Section (Displayed only when team is complete) */}
