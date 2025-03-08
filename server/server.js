@@ -8,6 +8,7 @@ import adminRouter from "./routes/adminRouter.js";
 
 import dotenv from "dotenv";
 import { auth } from "./config/firebaseAdmin.js"; // dont remove this
+import userRouter from "./routes/userRouter.js";
 dotenv.config();
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 // app.use("/api", liveRouter);
 
 app.use('/api/admin',adminRouter)
+app.use('/api/user',userRouter)
 
 const port = process.env.PORT;
 
