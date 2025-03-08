@@ -1,62 +1,41 @@
-// src/components/LeaderboardTable.js
 import React from 'react';
-import { FiArrowUp } from 'react-icons/fi';
 
-const LeaderboardTable = ({ others, loggedInUser, tableRef, showBackToTop, scrollToTop }) => {
+const LeaderboardTable = ({ others, loggedInUser }) => {
+  const sortedOthers = [...others].sort((a, b) => b.points - a.points);
+
   return (
-    <div
-      ref={tableRef}
-      className="w-full max-w-4xl bg-gray-800 bg-opacity-85 rounded-lg shadow-2xl p-8 border border-cyan-500/30 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-500 scrollbar-track-gray-900 relative"
-    >
-      {others.length === 0 ? (
-        <p className="text-center text-gray-300 text-lg">No additional users in the leaderboard.</p>
-      ) : (
-        <div className="space-y-4">
-          {others.map((user, index) => {
-            const rank = index + 4;
-            const isLoggedInUser = user.username === loggedInUser;
+    <div className="space-y-2 sm:space-y-3 md:space-y-4">
+      {sortedOthers.map((user, index) => {
+        const rank = index + 4;
+        const isLoggedInUser = user.username === loggedInUser;
 
-            return (
-              <div
-                key={user.username}
-                className={`flex justify-between items-center p-4 rounded-md bg-gray-700 bg-opacity-80 border ${
-                  isLoggedInUser
-                    ? 'border-yellow-400 bg-yellow-900/30'
-                    : 'border-gray-600'
-                } hover:bg-gray-600 transition-colors duration-200`}
-                tabIndex={0}
-                role="listitem"
-                aria-label={`Rank ${rank}: ${user.username} with ${user.points} points`}
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="w-10 h-10 flex items-center justify-center rounded-md bg-cyan-500 text-white font-bold text-sm">
-                    {rank}
-                  </span>
-                  <span
-                    className={`text-lg md:text-xl text-white truncate ${
-                      isLoggedInUser ? 'font-bold text-yellow-300' : ''
-                    }`}
-                  >
-                    {user.username}
-                  </span>
-                </div>
-                <span className="text-lg md:text-xl text-white font-medium">
-                  {user.points.toLocaleString()} Pts
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-20 right-10 bg-cyan-500 text-white p-3 rounded-full shadow-lg hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-colors duration-200 z-10"
-          aria-label="Scroll back to top"
-        >
-          <FiArrowUp size={24} />
-        </button>
-      )}
+        return (
+          <div
+            key={user.username}
+            className={`flex items-center p-2 sm:p-3 md:p-4 rounded-lg transition-all duration-300 ${
+              isLoggedInUser ? 'bg-blue-800/50' : 'bg-gray-400/50'
+            } hover:shadow-lg hover:bg-gray-700/50`}
+          >
+            <div className="w-8 sm:w-10 md:w-12 text-center text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-300">
+              {rank}
+            </div>
+            <img
+              src={user.image}
+              alt={`${user.username} profile`}
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full object-cover border-2 border-gray-700 mr-2 sm:mr-3 md:mr-4 shadow-md"
+            />
+            <div className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg font-medium text-white truncate">
+              {user.username}
+              {isLoggedInUser && (
+                <span className="text-blue-400 ml-1 sm:ml-2 font-semibold"> (You)</span>
+              )}
+            </div>
+            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-medium text-white">
+              {user.points} pts
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
