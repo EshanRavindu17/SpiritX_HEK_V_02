@@ -11,7 +11,10 @@ import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 
 import CreateTeam from './pages/CreateTeam';
+
+import EditPlayer from './components/EditPlayer'
 import LeaderboardView from './pages/LeaderboardView';
+
 
 
 function App() {
@@ -30,6 +33,7 @@ function App() {
           <Route path='tournament-summary' element={<Summary/>}></Route>
           <Route path='new-player' element={<AddPlayer/>}></Route>
           <Route path='player-statistics' element={<PlayerStatistics/>}></Route>
+          <Route path='edit-player/:id' element={<EditPlayer/>}></Route>
         </Route>
 
       </Routes>
