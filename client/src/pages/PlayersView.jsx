@@ -3,6 +3,7 @@ import { FiX } from "react-icons/fi";
 import axios from "axios";
 import image1 from "../assets/images/icon.png";
 
+
 const PlayersView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
@@ -112,7 +113,6 @@ const PlayersView = () => {
           ))}
         </select>
       </div>
-
       {loading ? (
         <p className="text-gray-400">Loading players...</p>
       ) : (
