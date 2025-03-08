@@ -13,6 +13,7 @@ const availablePlayers = [
   { name: 'Player 9', university: 'University I', points: 85 },
   { name: 'Player 10', university: 'University J', points: 90 },
   { name: 'Player 11', university: 'University K', points: 60 },
+  // Add more players as needed
 ];
 
 const TeamView = () => {
@@ -35,119 +36,59 @@ const TeamView = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#d1d5db] via-[#e5e7eb] to-[#f3f4f6] text-white p-6 md:p-8 flex flex-col items-center">
-      <div className="bg-white shadow-lg p-6 mb-5 rounded-lg text-center w-full">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-montserrat font-extrabold uppercase tracking-[0.2em] text-black drop-shadow-lg">
-          Select Your Team
-        </h2>
-      </div>
 
-      {/* Team Status */}
-      <div className="w-full mb-8">
-        <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider text-gray-800 mb-2 drop-shadow-md">
-          {team.length}/11 Players Selected
-        </h3>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl mb-4">Select Your Team</h2>
+      <div className="mb-4">
+        <h3 className="text-lg mb-2">{team.length}/11 Players Selected</h3>
         {team.length === 11 && (
-          <h4 className="text-green-500 text-sm md:text-base uppercase tracking-wide">
-            Team is complete! Total Points: {teamPoints}
-          </h4>
+          <h4 className="text-green-500">Team is complete! Total Points: {teamPoints}</h4>
         )}
       </div>
 
-      {/* Available Players */}
-      <div className="w-full mb-8">
-        <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider text-gray-800 mb-4 drop-shadow-md">
-          Available Players
-        </h3>
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="mb-4">
+        <h3 className="text-lg mb-2">Available Players</h3>
+        <ul>
           {remainingPlayers.map((player) => (
-            <li
-              key={player.name}
-              className="relative bg-gradient-to-br from-[#1c2526] to-[#2a2e35] rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-4 flex flex-col justify-between min-h-[220px] overflow-hidden transform hover:scale-105 hover:shadow-xl"
-            >
-              <div className="relative z-10 flex items-start space-x-4 mb-3">
-                <div className="w-24 h-24 rounded-full bg-gray-700 bg-opacity-50 border-2 border-blue-500 flex items-center justify-center shadow-lg">
-                  <span className="text-gray-400 text-xs uppercase">Upload</span>
-                </div>
-                <div className="flex-1 text-right">
-                  <span className="text-lg font-extrabold uppercase tracking-wider text-white drop-shadow-md">
-                    {player.name}
-                  </span>
-                  <p className="text-xs text-gray-300 uppercase tracking-wide drop-shadow-sm">
-                    {player.university}
-                  </p>
-                </div>
-              </div>
-              <div className="relative z-10 mt-1 h-1 w-12 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto opacity-80"></div>
-              <div className="relative z-10 mt-auto">
-                <button
-                  onClick={() => handleAddPlayer(player)}
-                  className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 px-4 py-3 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-300 w-full shadow-md hover:shadow-lg"
-                  aria-label={`Add ${player.name} to team`}
-                >
-                  Add
-                </button>
-              </div>
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+              <button
+                onClick={() => handleAddPlayer(player)}
+                className="bg-blue-500 text-white py-1 px-3 rounded"
+              >
+                Add
+              </button>
             </li>
           ))}
         </ul>
       </div>
-
-      {/* Your Team */}
-      <div className="w-full mt-4">
-        <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider text-gray-800 mb-4 drop-shadow-md">
-          Your Team
-        </h3>
-        {team.length === 0 && (
-          <p className="text-center text-gray-400 uppercase tracking-wide text-sm">
-            No players selected yet
-          </p>
-        )}
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="mt-4">
+        <h3 className="text-lg mb-2">Your Team</h3>
+        {team.length === 0 && <p>No players selected yet</p>}
+        <ul>
           {team.map((player) => (
-            <li
-              key={player.name}
-              className="relative bg-gradient-to-br from-[#1c2526] to-[#2a2e35] rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-4 flex flex-col justify-between min-h-[220px] overflow-hidden transform hover:scale-105 hover:shadow-xl"
-            >
-              <div className="relative z-10 flex items-start space-x-4 mb-3">
-                <div className="w-24 h-24 rounded-full bg-gray-700 bg-opacity-50 border-2 border-blue-500 flex items-center justify-center shadow-lg">
-                  <span className="text-gray-400 text-xs uppercase">Upload</span>
-                </div>
-                <div className="flex-1 text-right">
-                  <span className="text-lg font-extrabold uppercase tracking-wider text-white drop-shadow-md">
-                    {player.name}
-                  </span>
-                  <p className="text-xs text-gray-300 uppercase tracking-wide drop-shadow-sm">
-                    {player.university}
-                  </p>
-                </div>
-              </div>
-              <div className="relative z-10 text-center text-sm text-gray-300 uppercase tracking-wide">
-                Points: {player.points}
-              </div>
-              <div className="relative z-10 mt-1 h-1 w-12 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto opacity-80"></div>
-              <div className="relative z-10 mt-auto">
-                <button
-                  onClick={() => handleRemovePlayer(player)}
-                  className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 px-4 py-3 rounded-lg text-xs font-semibold uppercase tracking-wide transition-all duration-300 w-full shadow-md hover:shadow-lg"
-                  aria-label={`Remove ${player.name} from team`}
-                >
-                  Remove
-                </button>
-              </div>
+            <li key={player.name} className="p-2 border-b flex justify-between items-center">
+              <span>{player.name} - {player.university}</span>
+              <span>Points: {player.points}</span>
+              <button
+                onClick={() => handleRemovePlayer(player)}
+                className="bg-red-500 text-white py-1 px-3 rounded"
+              >
+                Remove
+              </button>
             </li>
           ))}
         </ul>
       </div>
+      {team.length === 11 && (
+        <div className="mt-4">
+          <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
+        </div>
+      )}
 
-      {/* Total Points */}
-      <div className="w-full mt-8">
-        <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider text-gray-800 mb-2 drop-shadow-md">
-          Total Points: {teamPoints}
-        </h3>
-      </div>
     </div>
   );
 };
 
 export default TeamView;
+
