@@ -78,6 +78,14 @@ const TeamView = () => {
   
   }
 
+
+  // return (
+  // const handleRemovePlayer = (player) => {
+  //   setTeam(team.filter((p) => p.name !== player.name));
+  //   setTeamPoints(teamPoints - player.points);
+  //   setRemainingPlayers([...remainingPlayers, player]);
+  // };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
       <ToastContainer
@@ -93,6 +101,7 @@ const TeamView = () => {
             Your Team
           </div>
         </div>
+
 
         {/* Search & Filter Section (Simplified as Static Text) */}
         <div className="flex flex-col md:flex-row md:space-x-4 mb-8 relative">
@@ -234,7 +243,7 @@ const TeamView = () => {
 };
 
 
-export default TeamView;
+
 
 export default TeamView;
 

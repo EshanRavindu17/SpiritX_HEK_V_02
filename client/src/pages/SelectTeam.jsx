@@ -1,40 +1,12 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { FiX } from 'react-icons/fi';
+import React, { useState, useRef, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
-
-const playerData = {
-  Batters: [
-    { name: 'Rohit Sharma', university: 'Mumbai University', cost: 800000, category: 'Batters' },
-    { name: 'Virat Kohli', university: 'Delhi University', cost: 900000, category: 'Batters' },
-    { name: 'Shubman Gill', university: 'Punjab University', cost: 650000, category: 'Batters' },
-    { name: 'Suryakumar Yadav', university: 'Mumbai University', cost: 750000, category: 'Batters' },
-    { name: 'KL Rahul', university: 'Karnataka University', cost: 700000, category: 'Batters' },
-    { name: 'Ishan Kishan', university: 'Jharkhand University', cost: 600000, category: 'Batters' },
-  ],
-  Bowlers: [
-    { name: 'Jasprit Bumrah', university: 'Gujarat University', cost: 850000, category: 'Bowlers' },
-    { name: 'Mohammed Shami', university: 'Bengal University', cost: 700000, category: 'Bowlers' },
-    { name: 'Yuzvendra Chahal', university: 'Rajasthan University', cost: 600000, category: 'Bowlers' },
-    { name: 'Arshdeep Singh', university: 'Punjab University', cost: 550000, category: 'Bowlers' },
-    { name: 'Ravichandran Ashwin', university: 'Tamil Nadu University', cost: 650000, category: 'Bowlers' },
-    { name: 'Kuldeep Yadav', university: 'Uttar Pradesh University', cost: 600000, category: 'Bowlers' },
-  ],
-  'All-rounders': [
-    { name: 'Hardik Pandya', university: 'Gujarat University', cost: 900000, category: 'All-rounders' },
-    { name: 'Ravindra Jadeja', university: 'Saurashtra University', cost: 850000, category: 'All-rounders' },
-    { name: 'Ben Stokes', university: 'Durham University', cost: 950000, category: 'All-rounders' },
-    { name: 'Axar Patel', university: 'Gujarat University', cost: 700000, category: 'All-rounders' },
-    { name: 'Andre Russell', university: 'West Indies University', cost: 800000, category: 'All-rounders' },
-    { name: 'Shivam Dube', university: 'Mumbai University', cost: 600000, category: 'All-rounders' },
-  ],
-};
-
-// Sample categories
+// Categories must match backend exactly
 const categories = ['Batters', 'Bowlers', 'All-rounders'];
 
-const initialBudget = 9000000; // Rs.9,000,000
+const initialBudget = 100000000; // Rs.9,000,000
 const maxTeamSize = 11; // Maximum number of players allowed
 
 const SelectTeamView = () => {
@@ -45,32 +17,67 @@ const SelectTeamView = () => {
   const [selectedUniversity, setSelectedUniversity] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const id = localStorage.getItem("id");
+
+  const [Batters, setBatters] = useState([]);
+  const [Bowlers, setBowlers] = useState([]);
+  const [Allrounders, setAllrounders] = useState([]);
 
   const searchInputRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // Memoized filtered players for performance
-  const filteredPlayers = useMemo(() => {
-    const playersInCategory = playerData[selectedCategory] || [];
-    return playersInCategory.filter((player) => {
-      const matchesSearch =
-        player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        player.university.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesUniversity = selectedUniversity
-        ? player.university === selectedUniversity
-        : true;
-      const notInTeam = !team.find((p) => p.name === player.name); // Exclude players already in team
-      return matchesSearch && matchesUniversity && notInTeam;
-    });
-  }, [searchTerm, selectedUniversity, selectedCategory, team]);
+  // Fetch players from backend
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/user/getfilterplayers");
+        if (response.data.success) {
+          setBatters(response.data.batsmans || []);
+          setBowlers(response.data.bowlers || []);
+          setAllrounders(response.data.allRounders || []);
+          console.log("Fetched data:", response.data); // Debug backend response
+        } else {
+          toast.error("Failed to load players from server.");
+        }
+      } catch (error) {
+        toast.error("Error fetching players. Please try again.");
+        console.error("Error fetching players:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Calculate category counts
-  const categoryCounts = useMemo(() => {
-    return categories.reduce((acc, category) => {
-      acc[category] = team.filter((player) => player.category === category).length;
-      return acc;
-    }, {});
-  }, [team]);
+    fetchPlayers();
+  }, []);
+
+  // Map category to state (simplified without useMemo for now)
+  const categoryData = {
+    Batters,
+    Bowlers,
+    'All-rounders': Allrounders,
+  };
+
+  // Filtered players (simplified without useMemo for now)
+  const filteredPlayers = (categoryData[selectedCategory] || []).filter((player) => {
+    const matchesSearch =
+      player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      player.university.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesUniversity = selectedUniversity
+      ? player.university === selectedUniversity
+      : true;
+    const notInTeam = !team.find((p) => p.name === player.name);
+    return matchesSearch && matchesUniversity && notInTeam;
+  });
+
+  // Calculate category counts directly (no useMemo)
+  const categoryCounts = categories.reduce((acc, category) => {
+    acc[category] = team.filter((player) => player.category === category).length;
+    return acc;
+  }, {});
+  console.log("Team state:", team); // Debug team state
+  console.log("Category counts:", categoryCounts); // Debug counts
 
   // Handle adding a player to the team
   const handleAddPlayer = (player) => {
@@ -86,11 +93,16 @@ const SelectTeamView = () => {
       toast.error('Insufficient budget to add this player.');
       return;
     }
-    setTeam([...team, player]);
-    setBudget(budget - player.cost);
+    const updatedPlayer = { ...player, category: player.category || selectedCategory };
+    setTeam((prevTeam) => {
+      const newTeam = [...prevTeam, updatedPlayer];
+      console.log("After adding player, new team:", newTeam); // Debug team after adding
+      return newTeam;
+    });
+    setBudget((prevBudget) => prevBudget - player.cost);
     toast.success(`${player.name} added to your team!`);
-    setSearchTerm(''); // Clear search term after adding
-    setIsDropdownOpen(false); // Close dropdown
+    setSearchTerm('');
+    setIsDropdownOpen(false);
   };
 
   // Handle removing a player from the team
@@ -100,8 +112,12 @@ const SelectTeamView = () => {
 
   const confirmRemovePlayer = () => {
     if (showConfirmDialog) {
-      setTeam(team.filter((p) => p.name !== showConfirmDialog.name));
-      setBudget(budget + showConfirmDialog.cost);
+      setTeam((prevTeam) => {
+        const newTeam = prevTeam.filter((p) => p.name !== showConfirmDialog.name);
+        console.log("After removing player, new team:", newTeam); // Debug team after removing
+        return newTeam;
+      });
+      setBudget((prevBudget) => prevBudget + showConfirmDialog.cost);
       toast.error(`${showConfirmDialog.name} removed from your team.`);
       setShowConfirmDialog(null);
     }
@@ -122,7 +138,7 @@ const SelectTeamView = () => {
 
   // Handle selecting a player from the search dropdown
   const handleSelectPlayer = (player) => {
-    handleAddPlayer(player); // Add the player directly when selected
+    handleAddPlayer(player);
   };
 
   // Handle university filter
@@ -131,14 +147,29 @@ const SelectTeamView = () => {
   // Handle category change
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setSearchTerm(''); // Clear search term when changing category
-    setIsDropdownOpen(false); // Close dropdown
+    setSearchTerm('');
+    setIsDropdownOpen(false);
   };
 
   // Handle team submission
-  const handleSubmitTeam = () => {
-    toast.success('Team submitted successfully!');
-    // Add further logic here (e.g., API call, redirect, etc.)
+  const handleSubmitTeam = async() => {
+    console.log('Team submitted:', team);
+    console.log("id",id) // Debug team submission
+
+
+    try{
+      const response = await axios.post('http://localhost:4000/api/user/submitteam', 
+        {team,id}
+      )
+      if(response.data.success){
+        toast.success('Team submitted successfully!');
+      }
+    }catch(error){
+      toast.error('Failed to submit team. Please try again.');
+      console.error('Error submitting team:', error);
+    }
+      
+    
   };
 
   // Close dropdown if clicking outside
@@ -157,27 +188,28 @@ const SelectTeamView = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Calculate budget usage percentage for progress bar
+  // Calculate budget usage percentage
   const budgetUsagePercentage = ((initialBudget - budget) / initialBudget) * 100;
 
-  // Get all universities for the filter dropdown
-  const allUniversities = useMemo(() => {
-    const universities = new Set();
-    Object.values(playerData).flat().forEach((player) => universities.add(player.university));
-    return Array.from(universities);
-  }, []);
+  // Get all universities (simplified without useMemo)
+  const allUniversities = Array.from(
+    new Set([Batters, Bowlers, Allrounders].flat().map((player) => player.university).filter(Boolean))
+  );
 
   // Team completeness status
   const teamCompleteness = `${team.length}/${maxTeamSize} players selected`;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 flex items-center justify-center">
+        <p className="text-white text-xl">Loading players...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        aria-live="polite"
-      />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} aria-live="polite" />
       <div className="container mx-auto max-w-6xl bg-transparent">
         {/* Header Section */}
         <div className="text-center mb-8 md:mb-10">
@@ -215,7 +247,6 @@ const SelectTeamView = () => {
               onChange={handleSearch}
               ref={searchInputRef}
             />
-            {/* Search Suggestions */}
             {isDropdownOpen && searchTerm && filteredPlayers.length > 0 && (
               <div
                 ref={dropdownRef}
@@ -239,7 +270,6 @@ const SelectTeamView = () => {
             )}
           </div>
 
-          {/* University Filter */}
           <select
             className="mt-4 md:mt-0 p-4 w-full md:w-1/3 bg-gray-800 bg-opacity-90 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm uppercase tracking-wide text-white transition-all duration-300"
             value={selectedUniversity}
@@ -306,7 +336,6 @@ const SelectTeamView = () => {
                   <div className="flex flex-col mb-4">
                     <span className="text-white text-lg font-semibold">{player.name}</span>
                     <span className="text-gray-400 text-sm">{player.university}</span>
-                    {/* <span className="text-gray-400 text-sm">{player.stats}</span> */}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-yellow-400 font-bold">Rs. {player.cost.toLocaleString()}</span>
@@ -334,10 +363,10 @@ const SelectTeamView = () => {
                   {teamCompleteness}
                 </span>
               </div>
-              <div className="text-sm md:text-base text-gray-400">
+              <div className="text-sm md:text-base text-gray-400" key={team.length}>
                 {categories.map((category) => (
                   <span key={category} className="mr-4">
-                    {category}: {categoryCounts[category]}
+                    {category}: {categoryCounts[category] || 0}
                   </span>
                 ))}
               </div>
@@ -375,7 +404,6 @@ const SelectTeamView = () => {
                   <div className="flex flex-col mb-2 md:mb-0">
                     <span className="text-white font-medium">{player.name} ({player.category})</span>
                     <span className="text-gray-400 text-sm">{player.university}</span>
-                    <span className="text-gray-400 text-sm">{player.stats}</span>
                   </div>
                   <div className="flex items-center space-x-4">
                     <span className="text-yellow-400 font-bold">Rs. {player.cost.toLocaleString()}</span>
@@ -393,7 +421,7 @@ const SelectTeamView = () => {
           )}
         </div>
 
-        {/* Confirmation Dialog for Removing Players */}
+        {/* Confirmation Dialog */}
         {showConfirmDialog && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 p-6 rounded-xl shadow-lg max-w-sm w-full">
