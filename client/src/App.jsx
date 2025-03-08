@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';  // Import the router
 
+import PlayersView from './pages/PlayersView';
+import SelectTeamView from './pages/TeamView';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1 className="text-3xl font-bold underline ">
-      Hello world!
-    </h1>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/playersview" element={<PlayersView />} />
+        <Route path="/teamview" element={<SelectTeamView />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
