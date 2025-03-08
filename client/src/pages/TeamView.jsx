@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../../axios.js';
 
 // Sample player data (add points to each player)
 const availablePlayers = [
@@ -29,11 +30,40 @@ const TeamView = () => {
     }
   };
 
-  const handleRemovePlayer = (player) => {
-    setTeam(team.filter((p) => p.name !== player.name));
-    setTeamPoints(teamPoints - player.points);
-    setRemainingPlayers([...remainingPlayers, player]);
+  const handleRemovePlayer = async (player) => {
+    try {
+      // 🔐 Secure API call with JWT token
+      const jwtToken = localStorage.getItem("token"); 
+      console.log("jwt token 444444444:",jwtToken)
+
+      const response = await api.get(
+        "/test",
+       
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Consider using cookies instead of localStorage
+          },
+        }
+      );
+  
+      console.log("API Call Successful:", response.data);
+  
+    } catch (error) {
+      if (error.response) {
+        console.log("Server Error:", error.response.data);
+        setErrorMessage(error.response.data.message || "Something went wrong. Please try again.");
+      } else {
+        console.log("Client Error:", error.message);
+        setErrorMessage("Network error. Please try again.");
+      }
+    }
+  
+    // ✅ Update UI after API call
+    setTeam((prevTeam) => prevTeam.filter((p) => p.name !== player.name));
+    setTeamPoints((prevPoints) => prevPoints - player.points);
+    setRemainingPlayers((prevPlayers) => [...prevPlayers, player]);
   };
+  
 
   return (
     <div className="container mx-auto p-4">
@@ -72,7 +102,7 @@ const TeamView = () => {
               <span>Points: {player.points}</span>
               <button
                 onClick={() => handleRemovePlayer(player)}
-                className="bg-red-500 text-white py-1 px-3 rounded"
+                className="bg-green-700 text-white py-1 px-3 rounded"
               >
                 Remove
               </button>

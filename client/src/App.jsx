@@ -4,10 +4,10 @@ import Players from './components/Players'
 import Summary from './components/Summary'
 import AddPlayer from './components/AddPlayer'
 import PlayerStatistics from './components/PlayerStatistics'
-
+import Login from './pages/commonPages/Login'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
-import CreateTeam from './pages/CreateTeam';
+import TeamView from './pages/TeamView';
 
 function App() {
   
@@ -15,9 +15,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/fogot-password" element={<PlayersView />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
-        <Route path="/createteam" element={<CreateTeam />} />
+        <Route path="/teamview" element={<TeamView />} />
         <Route path='/admin-panel' element={<AdminPanel/>}>
           <Route index element={<Players/>}></Route>
           <Route path='tournament-summary' element={<Summary/>}></Route>
