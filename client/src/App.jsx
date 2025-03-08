@@ -14,8 +14,6 @@ import TeamView from './pages/TeamView';
 import EditPlayer from './components/EditPlayer'
 import LeaderboardView from './pages/LeaderboardView';
 
-
-
 function App() {
   
   return (

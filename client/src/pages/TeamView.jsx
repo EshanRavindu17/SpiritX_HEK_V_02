@@ -36,6 +36,7 @@ const TeamView = () => {
   };
 
   return (
+
     <div className="container mx-auto p-4">
       <h2 className="text-2xl mb-4">Select Your Team</h2>
       <div className="mb-4">
@@ -61,7 +62,6 @@ const TeamView = () => {
           ))}
         </ul>
       </div>
-
       <div className="mt-4">
         <h3 className="text-lg mb-2">Your Team</h3>
         {team.length === 0 && <p>No players selected yet</p>}
@@ -80,14 +80,15 @@ const TeamView = () => {
           ))}
         </ul>
       </div>
-
       {team.length === 11 && (
         <div className="mt-4">
           <h3 className="text-lg mb-2">Total Points: {teamPoints}</h3>
         </div>
       )}
+
     </div>
   );
 };
 
 export default TeamView;
+
