@@ -19,7 +19,6 @@ const availablePlayers = [
 ];
 
 const TeamView = () => {
-
   const [team, setTeam] = useState([]);
   const [teamPoints, setTeamPoints] = useState(0);
   const [remainingPlayers, setRemainingPlayers] = useState(availablePlayers);
@@ -42,7 +41,6 @@ const TeamView = () => {
 
   const navigate = useNavigate()
 
-
   const handleRemovePlayer = async (player) => {
     try {
       // 🔐 Secure API call with JWT token
@@ -57,16 +55,13 @@ const TeamView = () => {
       console.log("API Call Successful:", errorMessage);
       console.log("API Call Successful:", remainingPlayers);
 
-
-  
-
     } catch (error) {
       if (error.response) {
-        console.log("Server Error:", error.response.data);
-        setErrorMessage(error.response.data.message || "Something went wrong. Please try again.");
+        console.log('Server Error:', error.response.data);
+        setErrorMessage(error.response.data.message || 'Something went wrong. Please try again.');
       } else {
-        console.log("Client Error:", error.message);
-        setErrorMessage("Network error. Please try again.");
+        console.log('Client Error:', error.message);
+        setErrorMessage('Network error. Please try again.');
       }
     }
 
@@ -77,14 +72,6 @@ const TeamView = () => {
 
   
   }
-
-
-  // return (
-  // const handleRemovePlayer = (player) => {
-  //   setTeam(team.filter((p) => p.name !== player.name));
-  //   setTeamPoints(teamPoints - player.points);
-  //   setRemainingPlayers([...remainingPlayers, player]);
-  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
@@ -102,7 +89,6 @@ const TeamView = () => {
           </div>
         </div>
 
-
         {/* Search & Filter Section (Simplified as Static Text) */}
         <div className="flex flex-col md:flex-row md:space-x-4 mb-8 relative">
           <div className="relative w-full md:w-2/3"></div>
@@ -119,9 +105,7 @@ const TeamView = () => {
             <div className="mt-4">
               <div className="w-full bg-gray-700 rounded-full h-2.5">
                 <div
-                  className={`h-2.5 rounded-full transition-all duration-500 ${
-                    teamPoints > 500 ? 'bg-green-600' : 'bg-green-600'
-                  }`}
+                  className={`h-2.5 rounded-full transition-all duration-500 ${teamPoints > 500 ? 'bg-green-600' : 'bg-green-600'}`}
                   style={{ width: `${(teamPoints / 1000) * 100}%` }} // Assuming max points ~1000 for demo
                 ></div>
               </div>
@@ -145,7 +129,6 @@ const TeamView = () => {
 
         {/* Available Players Section - Show Add Player Button only when team length < 11 */}
         <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
-          
           <div className="text-center item-center justify-center">
             <p className="text-white ">
               {team.length === 11 ? 'Team is full' : ''}
@@ -153,7 +136,7 @@ const TeamView = () => {
             {team.length < 11 && (
 
               <button
-                onClick={()=>{navigate('/selectteam')}}
+                onClick={() => { navigate('/selectteam'); }}
                 className="bg-green-600 text-white py-4 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 aria-label="Add new player"
               >
@@ -243,7 +226,4 @@ const TeamView = () => {
 };
 
 
-
-
 export default TeamView;
-
