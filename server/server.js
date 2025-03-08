@@ -7,6 +7,7 @@ import adminForgotPasswordRouter from "./routes/adminForgotPassowrdRouter.js";
 
 import dotenv from "dotenv";
 import { auth } from "./config/firebaseAdmin.js"; // dont remove this
+import userRouter from "./routes/userRouter.js";
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api", adminForgotPasswordRouter);
 // app.use("/api", liveRouter);
 
 app.use('/api/admin',adminRouter)
+app.use('/api/user',userRouter)
 
 const port = process.env.PORT;
 
