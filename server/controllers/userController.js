@@ -118,8 +118,8 @@ const getfilterplayers = async (req, res) => {
 const submitTeam = async (req, res) => {
     try {
         const { team, id } = req.body;
-        console.log("team:", team); 
-        console.log("id:", id);     
+        console.log("team:", team);
+        console.log("id:", id);
 
         if (!db) {
             throw new Error("Firestore database not initialized");
@@ -141,14 +141,40 @@ const submitTeam = async (req, res) => {
             return player.id;
         });
 
-        // Create a new team document with only player IDs
-        const teamDoc = await db.collection("teams").add({
-            players: playerIds,
-            owner: id
-        });
+        // Step 1: Check if a team already exists for the owner
+        const teamSnapshot = await db.collection("teams")
+            .where("owner", "==", id)
+            .get();
 
-        // Return the ID of the newly created team
-        res.status(200).json({ success: true, id: teamDoc.id });
+        if (!teamSnapshot.empty) {
+            // Step 2: Team exists - Update the existing team
+            const existingTeamDoc = teamSnapshot.docs[0]; // Assuming one team per owner
+            const teamRef = existingTeamDoc.ref;
+
+            await teamRef.update({
+                players: playerIds, // Replace old players with new ones
+                updatedAt: new Date().toISOString() // Optional: track update time
+            });
+
+            res.status(200).json({
+                success: true,
+                id: existingTeamDoc.id,
+                message: "Team updated successfully"
+            });
+        } else {
+            // Step 3: No team exists - Create a new team
+            const teamDoc = await db.collection("teams").add({
+                players: playerIds,
+                owner: id,
+                createdAt: new Date().toISOString() // Optional: track creation time
+            });
+
+            res.status(200).json({
+                success: true,
+                id: teamDoc.id,
+                message: "Team created successfully"
+            });
+        }
     } catch (error) {
         console.error("Error submitting team:", error);
         res.status(500).json({
@@ -158,7 +184,6 @@ const submitTeam = async (req, res) => {
         });
     }
 };
-
 
 
 const getTeam = async (req, res) => {
@@ -327,7 +352,140 @@ const removePlayer = async (req, res) => {
     }
 };
 
+const getLeaderboard = async (req, res) => {
+    try {
+        // Check if db is initialized
+        if (!db) {
+            throw new Error("Firestore database not initialized");
+        }
+        console.log("leaderboard");
 
+        // Define the calculatePlayerPoints function within scope
+        const calculatePlayerPoints = (player) => {
+            const battingStrikeRate = player.ballsFaced > 0 ? (player.totalRuns / player.ballsFaced) * 100 : 0;
+            const battingAverage = player.inningsPlayed > 0 ? player.totalRuns / player.inningsPlayed : 0;
+            const bowlingStrikeRate = player.wickets > 0 ? (player.oversBowled * 6) / player.wickets : Infinity;
+            const economyRate = player.oversBowled > 0 ? (player.runsConceded / (player.oversBowled * 6)) * 6 : Infinity;
 
+            const points = 
+                (battingStrikeRate / 5) +
+                (battingAverage * 0.8) +
+                (bowlingStrikeRate === Infinity ? 0 : 500 / bowlingStrikeRate) +
+                (economyRate === Infinity ? 0 : 140 / economyRate);
 
-export { getPlayers,getfilterplayers ,submitTeam,getTeam,removePlayer};
+            return Math.round(points); // Adjust rounding or formula as needed
+        };
+
+        // Step 1: Fetch all teams from the teams collection
+        const teamsSnapshot = await db.collection("teams").get();
+        if (teamsSnapshot.empty) {
+            return res.status(200).json({
+                success: true,
+                leaderboard: [],
+                message: "No teams found"
+            });
+        }
+
+        // Step 2: Process each team
+        const leaderboardPromises = teamsSnapshot.docs.map(async (teamDoc) => {
+            const teamData = teamDoc.data();
+            const ownerId = teamData.owner; // userId
+            const playerIds = teamData.players || []; // Array of player IDs
+
+            // Step 3: Fetch owner details (assuming a 'users' collection with 'id' and 'name')
+            const ownerSnapshot = await db.collection("users").doc(ownerId).get();
+            const ownerName = ownerSnapshot.exists ? ownerSnapshot.data().name : "Unknown User";
+
+            // Step 4: Fetch player details and calculate total points using calculatePlayerPoints
+            let totalPoints = 0;
+            if (playerIds.length > 0) {
+                const playerPromises = playerIds.map(id => db.collection("players").doc(id).get());
+                const playerDocs = await Promise.all(playerPromises);
+                totalPoints = playerDocs
+                    .filter(doc => doc.exists) // Ensure player exists
+                    .reduce((sum, doc) => {
+                        const playerData = doc.data();
+                        const playerPoints = calculatePlayerPoints(playerData);
+                        return sum + playerPoints;
+                    }, 0);
+            }
+
+            return {
+                ownerName,
+                totalPoints
+            };
+        });
+
+        // Step 5: Resolve all promises and sort by totalPoints
+        const leaderboard = await Promise.all(leaderboardPromises);
+        leaderboard.sort((a, b) => b.totalPoints - a.totalPoints); // Descending order
+        console.log("Leaderboard data:", leaderboard);
+
+        // Step 6: Send response to frontend
+        res.status(200).json({
+            success: true,
+            leaderboard,
+            message: "Leaderboard fetched successfully"
+        });
+    } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch leaderboard",
+            error: error.message
+        });
+    }
+};
+
+const clearTeam = async (req, res) => {
+    try {
+        const user_obj  = req.body;
+        console.log("user_obj:", user_obj.id);
+
+        if (!db) {
+            throw new Error("Firestore database not initialized");
+        }
+
+        if (!user_obj.id) {
+            return res.status(400).json({
+                success: false,
+                message: "Owner ID is required",
+            });
+        }
+
+        // Find the team by owner (id)
+        const teamSnapshot = await db.collection("teams")
+            .where("owner", "==", user_obj.id)
+            .get();
+
+        if (teamSnapshot.empty) {
+            return res.status(404).json({
+                success: false,
+                message: "No team found for the specified owner",
+            });
+        }
+
+        // Assuming only one team per owner; get the first document
+        const teamDoc = teamSnapshot.docs[0];
+        const teamRef = teamDoc.ref;
+
+        // Delete the team document from Firestore
+        await teamRef.delete();
+
+        res.status(200).json({
+            success: true,
+            message: "Team deleted successfully",
+            teamId: teamDoc.id,
+        });
+
+    } catch (error) {
+        console.error("Error deleting team:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete team",
+            error: error.message,
+        });
+    }
+};
+
+export { getPlayers,getfilterplayers ,submitTeam,getTeam,removePlayer,getLeaderboard,clearTeam};

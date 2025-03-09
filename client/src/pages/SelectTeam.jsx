@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Categories must match backend exactly
 const categories = ['Batters', 'Bowlers', 'All-rounders'];
@@ -27,6 +28,8 @@ const SelectTeamView = () => {
 
   const searchInputRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  const navigate = useNavigate();
 
   // Fetch players from backend
   useEffect(() => {
@@ -133,9 +136,16 @@ const SelectTeamView = () => {
   };
 
   // Clear the entire team
-  const handleClearTeam = () => {
-    setTeam([]);
-    setBudget(initialBudget);
+  const handleClearTeam = async() => {
+
+    const response = await axios.post('http://localhost:4000/api/user/clearteam', { id });
+    if (response.data.success) {
+      toast.success('Team cleared successfully!');
+      setTeam([]);
+      setBudget(initialBudget);
+      navigate('/home')
+    }
+    
     toast.success('Team cleared successfully!');
   };
 

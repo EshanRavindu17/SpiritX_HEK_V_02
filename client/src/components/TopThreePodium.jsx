@@ -1,6 +1,18 @@
 import React from 'react';
+import image1 from '../assets/images/first.png';
+import image2 from '../assets/images/second.png';
+import image3 from '../assets/images/third.png';
 
 const TopThreePodium = ({ topThree, loggedInUser }) => {
+  // Check if topThree has at least 3 elements to avoid undefined errors
+  if (!topThree || topThree.length < 3) {
+    return (
+      <div className="text-center text-gray-400 py-6">
+        Not enough players to display the podium (minimum 3 required).
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex justify-center items-end space-x-4 sm:space-x-6 md:space-x-8 lg:space-x-12 px-4 py-6 sm:py-8 md:py-10">
       {/* Rank 2 (Left) */}
@@ -11,7 +23,7 @@ const TopThreePodium = ({ topThree, loggedInUser }) => {
           </div>
         </div>
         <img
-          src={topThree[1].image}
+          src={image2}
           alt={`${topThree[1].username} profile`}
           className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full object-cover border-2 border-gray-600 mb-2 sm:mb-3 shadow-lg"
         />
@@ -39,7 +51,7 @@ const TopThreePodium = ({ topThree, loggedInUser }) => {
           </div>
         </div>
         <img
-          src={topThree[0].image}
+          src={image1}
           alt={`${topThree[0].username} profile`}
           className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-gray-600 mb-2 sm:mb-3 shadow-lg"
         />
@@ -64,7 +76,7 @@ const TopThreePodium = ({ topThree, loggedInUser }) => {
           </div>
         </div>
         <img
-          src={topThree[2].image}
+          src={image3}
           alt={`${topThree[2].username} profile`}
           className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full object-cover border-2 border-gray-600 mb-2 sm:mb-3 shadow-lg"
         />
