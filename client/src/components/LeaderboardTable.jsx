@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LeaderboardTable = ({ others, loggedInUser }) => {
   const sortedOthers = [...others].sort((a, b) => b.points - a.points);

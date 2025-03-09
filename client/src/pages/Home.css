@@ -35,10 +35,7 @@
     transition: transform 0.3s ease, z-index 0.3s ease;
 }
 
-.relative:hover {
-    z-index: 10; /* Brings hovered element to the front */
-    transform: scale(1.05); /* Slightly enlarges the hovered element */
-}
+
 
 header.relative:hover {
     z-index: initial;
