@@ -7,7 +7,7 @@ import selectteam from "../assets/images/teamteam.avif";
 import "../pages/Home.css";
 
 const HomeScreen = () => {
-  const [userId,setUserId] = useState('');
+const [userId,setUserId] = useState('');
   const [name,setname]=useState('');
   const navigate = useNavigate();
 
