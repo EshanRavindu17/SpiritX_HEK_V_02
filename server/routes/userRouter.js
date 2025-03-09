@@ -1,9 +1,17 @@
 import express from 'express';
 import {verifyUser} from '../middleware/verifyJWTMiddleware.js';
 import { changePassword } from '../controllers/authController.js';
-const user = express.Router();
+import { getPlayers } from '../controllers/userController.js';
+
+const userRouter = express.Router();
+
+console.log("uuuuu")
+userRouter.post('/change-password', verifyUser, changePassword);
 
 
-user.post('/change-password', verifyUser, changePassword);
 
-export default user;
+userRouter.get('/getplayers',getPlayers)
+
+export default userRouter;
+
+

@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import TopThreePodium from '../components/TopThreePodium';
+import LeaderboardTable from '../components/LeaderboardTable';
+import LoggedInUserBlock from '../components/LoggedInUserBlock';
+import '../styles/leaderboard.css';
 
 const leaderboardData = [
   { username: 'user1', points: 1500 },
@@ -6,43 +10,86 @@ const leaderboardData = [
   { username: 'user3', points: 900 },
   { username: 'user4', points: 1600 },
   { username: 'user5', points: 1100 },
-  { username: 'loggedInUser', points: 1300 }, // Example of logged-in user
+  { username: 'loggedInUser', points: 1300 },
+  { username: 'player7', points: 1700 },
+  { username: 'player8', points: 1400 },
+  { username: 'player9', points: 1000 },
+  { username: 'player10', points: 1250 },
 ];
 
-// Assuming the logged-in user's username is passed as a prop or retrieved from state
 const loggedInUser = 'loggedInUser';
 
-const LeaderboardView = () => {
-  // Sort leaderboard data in descending order based on points
-  const sortedLeaderboard = leaderboardData.sort((a, b) => b.points - a.points);
+// Utility to sort leaderboard data
+const sortLeaderboard = (data) => {
+  return [...data].sort((a, b) => b.points - a.points);
+};
+
+const Leaderboard = () => {
+  const sortedLeaderboard = useMemo(() => sortLeaderboard(leaderboardData), []);
+  const topThree = sortedLeaderboard.slice(0, 3);
+  const others = sortedLeaderboard.slice(3);
+
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const tableRef = useRef(null);
+
+  // Scroll detection for Back to Top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (tableRef.current) {
+        const scrollTop = tableRef.current.scrollTop;
+        setShowBackToTop(scrollTop > 100);
+      }
+    };
+
+    const tableElement = tableRef.current;
+    if (tableElement) {
+      tableElement.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial check
+    }
+
+    return () => {
+      if (tableElement) {
+        tableElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Logged-in User Block Message
+  const loggedInUserData = sortedLeaderboard.find(
+    (user) => user.username === loggedInUser
+  );
+  const rank = sortedLeaderboard.findIndex((user) => user.username === loggedInUser) + 1;
 
   return (
-    <div className="min-h-screen bg-gray-900 py-10 px-5">
-      <div className="container mx-auto max-w-3xl bg-white rounded-lg shadow-lg p-6">
-        {/* Header Section */}
-        <div className="text-center mb-6">
-          <h2 className="text-4xl font-semibold text-gray-800">Leaderboard</h2>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-16 px-8 md:px-16 lg:px-24 flex flex-col items-center relative">
+      {/* Header */}
+      <h2 className="text-5xl md:text-6xl font-bold text-white mb-12 tracking-wider">
+        Leaderboard
+      </h2>
 
-        {/* Leaderboard List */}
-        <div className="space-y-4">
-          {sortedLeaderboard.map((user, index) => (
-            <div
-              key={user.username}
-              className={`flex justify-between items-center p-4 rounded-lg border ${user.username === loggedInUser ? 'bg-yellow-200 border-yellow-500' : 'bg-gray-100 hover:bg-gray-200'} transition duration-300`}
-            >
-              <div className="flex items-center space-x-3">
-                <span className={`text-2xl ${user.username === loggedInUser ? 'font-bold text-gray-800' : 'text-gray-700'}`}>
-                  {index + 1}. {user.username}
-                </span>
-              </div>
-              <span className="text-xl text-gray-700">{user.points} Points</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Top 3 Podium */}
+      <TopThreePodium topThree={topThree} loggedInUser={loggedInUser} />
+
+      <LeaderboardTable
+        others={others}
+        loggedInUser={loggedInUser}
+        tableRef={tableRef}
+        showBackToTop={showBackToTop}
+        scrollToTop={scrollToTop}
+      />
+
+      {/* Logged-in User Block positioned at the bottom-right */}
+      {loggedInUserData && (
+        <LoggedInUserBlock loggedInUserData={loggedInUserData} rank={rank} />
+      )}
     </div>
   );
 };
 
-export default LeaderboardView;
+export default Leaderboard;

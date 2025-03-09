@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { FaSpinner } from 'react-icons/fa'; // For loading spinner
-import { api } from '../axios';
+import { api } from '../../../axios';
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
