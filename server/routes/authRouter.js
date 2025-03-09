@@ -1,6 +1,6 @@
 import express from 'express';
 import { getAdminDashboard } from "../controllers/authController.js";
-import verifyUser from '../middleware/authMiddleware.js';
+import {verifyUser} from '../middleware/authMiddleware.js';
 import validateSignup from '../middleware/validateSignUp.js';
 const router = express.Router();
 router.post("/login", verifyUser, getAdminDashboard);

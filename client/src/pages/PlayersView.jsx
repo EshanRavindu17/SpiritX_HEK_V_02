@@ -5,6 +5,8 @@ import image1 from "../assets/images/icon.png";
 import { firestoreDB } from '../../../client/config/firebaseConfig'; // Adjust pathimport { collection, onSnapshot } from 'firebase/firestore';
 import { doc, setDoc,collection ,onSnapshot} from 'firebase/firestore';
 
+import { useNavigate } from "react-router-dom";
+
 const PlayersView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
@@ -21,6 +23,7 @@ const PlayersView = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(0);
 
   const searchInputRef = useRef(null);
+  const naviagte=useNavigate();
 
   useEffect(() => {
     const playersCollection = collection(firestoreDB, 'players');
@@ -36,6 +39,20 @@ const PlayersView = () => {
       },
       (error) => {
         alert("Failed to fetch players: " + error.message);
+
+    const token = localStorage.getItem('token');
+    if(!token){
+      naviagte('/login');
+    }
+
+    const fetchPlayers = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/user/getplayers");
+        if (response.data.success) {
+          setPlayers(response.data.players);
+        }
+      } catch (error) {
+        alert("Failed to fetch players");
         console.error("Error fetching players:", error);
         setLoading(false);
       }
@@ -128,14 +145,19 @@ console.log("active plyaer :",activePlayer)
   }, [searchTerm, selectedUniversity, players]);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#d1d5db] via-[#e5e7eb] to-[#f3f4f6] text-white p-6 md:p-8 flex flex-col items-center">
-      <div className="bg-white shadow-lg p-6 mb-5 rounded-lg text-center w-full">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-montserrat font-extrabold uppercase tracking-[0.2em] text-black drop-shadow-lg">
-          Available Players
-        </h2>
-      </div>
+    <div className="relative min-h-screen bg-gradient-to-br from-[#d1d5db] via-[#e5e7eb] to-[#f3f4f6] text-white   flex flex-col items-center">
+<div className="w-full relative bg-black bg-opacity-400  sm:p-6 md:p-8 flex justify-center items-center shadow-xl border-b border-gray-700">
+  <div className="flex justify-center items-center h-7 w-full mt-0">
+    <h2 
+      className="sm:text-xl md:text-5xl font-extrabold tracking-wider drop-shadow-md text-white"
+      style={{ fontFamily: "'Copperplate', 'Palatino Linotype', 'Arial Black', sans-serif" }}
+    >
+      Available Players
+    </h2>
+  </div>
+</div>
 
-      <div className="flex flex-col md:flex-row md:space-x-4 mb-8 relative w-full">
+      <div className="flex flex-col md:flex-row md:space-x-4 mt-4 mb-8 relative w-full">
         <input
           type="text"
           placeholder="Search Players"
@@ -160,7 +182,7 @@ console.log("active plyaer :",activePlayer)
       {loading ? (
         <p className="text-gray-400">Loading players...</p>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        <ul className="grid sm:grid-cols-3 md:grid-cols- lg:grid-cols-5 gap-4 w-full">
           {filteredPlayers.length > 0 ? (
             filteredPlayers.map((player, index) => (
               <li key={index} className="bg-gray-900 rounded-xl shadow-lg p-6 flex flex-col justify-between min-h-[200px]">
@@ -171,7 +193,7 @@ console.log("active plyaer :",activePlayer)
                     <p className="text-xs text-gray-400 uppercase mt-1">{player.university}</p>
                   </div>
                 </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl" onClick={() => handleViewStats(player)}>
+                <button className="bg-blue-600 hover:bg-blue-600 text-white py-2 px-4 rounded-xl" onClick={() => handleViewStats(player)}>
                   View Stats
                 </button>
               </li>

@@ -12,11 +12,9 @@ const TeamView = () => {
 
   const userId = localStorage.getItem('id');
 
- 
-
-
-
   const navigate = useNavigate();
+
+ 
 
   const handleRemovePlayer = async(player) => {
 
@@ -73,6 +71,10 @@ const TeamView = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      navigate('/login');
+    }
     const fetchTeam = async () => {
       try {
         const jwtToken = localStorage.getItem('token');
@@ -109,9 +111,14 @@ const TeamView = () => {
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} aria-live="polite" />
       <div className="container mx-auto max-w-6xl bg-transparent">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-wider">Your Team</h2>
-        </div>
+        <div className="mb-6 text-center bg-gray-900">
+  <h2 
+    className="sm:text-xl md:text-5xl font-extrabold tracking-wider drop-shadow-md text-white"
+    style={{ fontFamily: "'Copperplate', 'Palatino Linotype', 'Arial Black', sans-serif" }}
+  >
+    Your Team
+  </h2>
+</div>
 
         {/* Error Message */}
         {errorMessage && <p className="text-red-500 mb-4 text-center">{errorMessage}</p>}

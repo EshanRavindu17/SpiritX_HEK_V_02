@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Categories must match backend exactly
 const categories = ['Batters', 'Bowlers', 'All-rounders'];
@@ -28,8 +29,14 @@ const SelectTeamView = () => {
   const searchInputRef = useRef(null);
   const dropdownRef = useRef(null);
 
+  const navigate = useNavigate();
+
   // Fetch players from backend
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      navigate('/login');
+    }
     const fetchPlayers = async () => {
       try {
         const response = await axios.get(`http://localhost:4000/api/user/getfilterplayers/${id}`);
@@ -133,9 +140,16 @@ const SelectTeamView = () => {
   };
 
   // Clear the entire team
-  const handleClearTeam = () => {
-    setTeam([]);
-    setBudget(initialBudget);
+  const handleClearTeam = async() => {
+
+    const response = await axios.post('http://localhost:4000/api/user/clearteam', { id });
+    if (response.data.success) {
+      toast.success('Team cleared successfully!');
+      setTeam([]);
+      setBudget(initialBudget);
+      navigate('/home')
+    }
+    
     toast.success('Team cleared successfully!');
   };
 
@@ -207,25 +221,31 @@ const SelectTeamView = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 flex items-center justify-center">
+      <div className="relative min-h-screen bg-gradient-to-br from-[#d1d5db] via-[#e5e7eb] to-[#f3f4f6] flex items-center justify-center">
         <p className="text-white text-xl">Loading players...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 p-4 md:p-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#d1d5db] via-[#e5e7eb] to-[#f3f4f6] text-white flex flex-col items-center">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} aria-live="polite" />
-      <div className="container mx-auto max-w-6xl bg-transparent">
-        {/* Header Section */}
-        <div className="text-center mb-8 md:mb-10">
-          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-wider">
+      {/* Header Section - Moved outside the container */}
+      <div className="relative bg-black  p-4 sm:p-6 md:p-8 flex justify-center items-center shadow-xl  border-black w-full">
+        <div className="flex justify-center items-center h-7 w-full">
+          <h2 
+            className="sm:text-xl md:text-5xl font-extrabold tracking-wider drop-shadow-md text-white"
+            style={{ fontFamily: "'Copperplate', 'Palatino Linotype', 'Arial Black', sans-serif" }}
+          >
             Manage Your Fantasy Team
           </h2>
         </div>
+      </div>
 
+      {/* Container for the rest of the content */}
+      <div className="container mx-auto max-w-6xl bg-transparent">
         {/* Category Selector */}
-        <div className="mb-6 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+        <div className="mb-6 mt-4 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
           {categories.map((category, index) => (
             <button
               key={index}
