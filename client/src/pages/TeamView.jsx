@@ -13,12 +13,26 @@ const TeamView = () => {
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
 
-  const handleRemovePlayer = (player) => {
-    setTeam((prevTeam) => {
-      const newTeam = prevTeam.filter((p) => p.name !== player.name);
-      setTeamPoints((prevPoints) => prevPoints - player.points);
-      return newTeam;
-    });
+  const handleRemovePlayer = async(player) => {
+
+    try{
+      const response = await axios.post('http://localhost:4000/api/user/removePlayer', {
+        player_id: player.id,
+        id: userId
+      });
+      if(response.data.success){
+        toast.success(`Player ${player.name} removed successfully!`);
+        setTeam((prevTeam) => {
+          const newTeam = prevTeam.filter((p) => p.name !== player.name);
+          setTeamPoints((prevPoints) => prevPoints - player.points);
+          return newTeam;
+        });
+      }
+    }catch(error){
+      console.log('Error removing player:', error);
+      toast.error(error.message || 'Failed to remove player. Please try again.');
+    }
+    
     setErrorMessage(''); // Clear error on successful removal
   };
 
@@ -98,7 +112,7 @@ const TeamView = () => {
         {errorMessage && <p className="text-red-500 mb-4 text-center">{errorMessage}</p>}
 
         {/* Total Points (Shown only when team has players) */}
-        {team.length > 0 && (
+        {team.length == 11 && (
           <div className="bg-gray-900 p-4 md:p-6 rounded-xl shadow-lg mb-6">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <h3 className="text-lg md:text-xl text-gray-200">Total Points</h3>

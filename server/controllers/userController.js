@@ -14,12 +14,30 @@ const getPlayers = async (req, res) => {
 
 const getfilterplayers = async (req, res) => {
     try {
-        // Check if db is initialized (assuming db is imported from a config file)
+        // Check if db is initialized
         if (!db) {
             throw new Error("Firestore database not initialized");
         }
 
-        // Fetch all players in parallel for better performance
+        // Get owner from request (assuming it's passed as a route parameter)
+        const owner = req.params.id; // e.g., /api/players/:id
+        console.log("Owner ID:", owner);
+        if (!owner) {
+            throw new Error("Owner parameter is required");
+        }
+
+        // Get selected player IDs from teams collection
+        const teamSnapshot = await db.collection("teams")
+            .where("owner", "==", owner)
+            .get();
+
+        let selectedPlayerIds = [];
+        if (!teamSnapshot.empty) {
+            const teamData = teamSnapshot.docs[0].data();
+            selectedPlayerIds = teamData.players || [];
+        }
+
+        // Fetch all players in parallel
         const [batSnapshot, ballSnapshot, allSnapshot] = await Promise.all([
             db.collection("players").where("category", "==", "Batsman").get(),
             db.collection("players").where("category", "==", "Bowler").get(),
@@ -30,43 +48,68 @@ const getfilterplayers = async (req, res) => {
         const calculatePlayerCost = (player) => {
             const battingStrikeRate = player.ballsFaced > 0 ? (player.totalRuns / player.ballsFaced) * 100 : 0;
             const battingAverage = player.inningsPlayed > 0 ? player.totalRuns / player.inningsPlayed : 0;
-            const bowlingStrikeRate = player.wickets > 0 ? (player.oversBowled * 6) / player.wickets : Infinity; // Use Infinity for no wickets
-            const economyRate = player.oversBowled > 0 ? (player.runsConceded / (player.oversBowled * 6)) * 6 : Infinity; // Use Infinity for no overs
+            const bowlingStrikeRate = player.wickets > 0 ? (player.oversBowled * 6) / player.wickets : Infinity;
+            const economyRate = player.oversBowled > 0 ? (player.runsConceded / (player.oversBowled * 6)) * 6 : Infinity;
 
             const playerPoints =
                 (battingStrikeRate / 5) +
                 (battingAverage * 0.8) +
-                (bowlingStrikeRate === Infinity ? 0 : 500 / bowlingStrikeRate) + // 0 points if no wickets
-                (economyRate === Infinity ? 0 : 140 / economyRate); // 0 points if no overs bowled
+                (bowlingStrikeRate === Infinity ? 0 : 500 / bowlingStrikeRate) +
+                (economyRate === Infinity ? 0 : 140 / economyRate);
 
             return Math.round(((9 * playerPoints + 100) * 1000) / 50000) * 50000;
         };
 
-        // Process players for each category
-        const processPlayers = (snapshot) =>
-            snapshot.docs.map((doc) => {
-                const player = { id: doc.id, ...doc.data() };
-                const playerValue = calculatePlayerCost(player);
-                return {
-                    id: player.id,
-                    name: player.name,
-                    university: player.university,
-                    cost: playerValue, // Keep as number
-                    category: player.category,
-                };
-            });
+        // Process players (shared function for both selected and unselected)
+        const processPlayers = (doc) => {
+            const player = { id: doc.id, ...doc.data() };
+            const playerValue = calculatePlayerCost(player);
+            return {
+                id: player.id,
+                name: player.name,
+                university: player.university,
+                cost: playerValue,
+                category: player.category,
+            };
+        };
 
-        const batsmans = processPlayers(batSnapshot);
-        const bowlers = processPlayers(ballSnapshot);
-        const allRounders = processPlayers(allSnapshot);
+        // Process unselected players by category
+        const batsmans = batSnapshot.docs
+            .filter(doc => !selectedPlayerIds.includes(doc.id))
+            .map(processPlayers);
+        const bowlers = ballSnapshot.docs
+            .filter(doc => !selectedPlayerIds.includes(doc.id))
+            .map(processPlayers);
+        const allRounders = allSnapshot.docs
+            .filter(doc => !selectedPlayerIds.includes(doc.id))
+            .map(processPlayers);
 
-        res.status(200).json({ success: true, batsmans, bowlers, allRounders });
+        // Fetch and process selected players individually
+        let selectedPlayers = [];
+        if (selectedPlayerIds.length > 0) {
+            const selectedPromises = selectedPlayerIds.map(id =>
+                db.collection("players").doc(id).get()
+            );
+            const selectedDocs = await Promise.all(selectedPromises);
+            selectedPlayers = selectedDocs
+                .filter(doc => doc.exists) // Ensure the document exists
+                .map(processPlayers);
+        }
+
+        res.status(200).json({
+            success: true,
+            batsmans, // Only unselected Batsmen
+            bowlers,  // Only unselected Bowlers
+            allRounders, // Only unselected All-Rounders
+            selectedPlayers, // All selected players (Batsmen, Bowlers, All-Rounders)
+            selectedCount: selectedPlayerIds.length,
+        });
     } catch (error) {
         console.error("Error filtering players:", error);
         res.status(500).json({
             success: false,
             message: "Failed to fetch players",
-            error: error.message, // Provide more context
+            error: error.message,
         });
     }
 };
@@ -153,7 +196,7 @@ const getTeam = async (req, res) => {
         const teamData = teamDoc.data();
         const playerIds = teamData.players; // Array of 11 player IDs
 
-        if (!Array.isArray(playerIds) || playerIds.length !== 11) {
+        if (!Array.isArray(playerIds) ) {
             return res.status(400).json({
                 success: false,
                 message: "Team must contain exactly 11 player IDs",
@@ -214,6 +257,77 @@ const calculatePlayerPoints = (player) => {
 };
 
 
+const removePlayer = async (req, res) => {
+    try {
+        console.log("awaaaaaaaa")
+        const { player_id, id } = req.body;
+
+        // Validate input
+        if (!player_id || !id) {
+            return res.status(400).json({
+                success: false,
+                message: "player_id and id (owner) are required",
+            });
+        }
+
+        // Check if db is initialized
+        if (!db) {
+            throw new Error("Firestore database not initialized");
+        }
+
+        // Find the team by owner (id)
+        const teamSnapshot = await db.collection("teams")
+            .where("owner", "==", id)
+            .get();
+
+        if (teamSnapshot.empty) {
+            return res.status(404).json({
+                success: false,
+                message: "No team found for the specified owner",
+            });
+        }
+
+        // Assuming only one team per owner; get the first document
+        const teamDoc = teamSnapshot.docs[0];
+        const teamRef = teamDoc.ref;
+        const teamData = teamDoc.data();
+        const currentPlayers = teamData.players || [];
+
+        // Check if player exists in the team
+        if (!currentPlayers.includes(player_id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Player not found in this team",
+            });
+        }
+
+        // Remove the player_id from the players array
+        const updatedPlayers = currentPlayers.filter(pid => pid !== player_id);
+
+        // Update the team document in Firestore
+        await teamRef.update({
+            players: updatedPlayers
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Player removed successfully",
+            teamId: teamDoc.id,
+            removedPlayerId: player_id,
+            updatedPlayerCount: updatedPlayers.length
+        });
+
+    } catch (error) {
+        console.error("Error removing player:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to remove player",
+            error: error.message,
+        });
+    }
+};
 
 
-export { getPlayers,getfilterplayers ,submitTeam,getTeam};
+
+
+export { getPlayers,getfilterplayers ,submitTeam,getTeam,removePlayer};

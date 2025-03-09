@@ -32,11 +32,12 @@ const SelectTeamView = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/user/getfilterplayers");
+        const response = await axios.get(`http://localhost:4000/api/user/getfilterplayers/${id}`);
         if (response.data.success) {
           setBatters(response.data.batsmans || []);
           setBowlers(response.data.bowlers || []);
           setAllrounders(response.data.allRounders || []);
+          setTeam(response.data.selectedPlayers || []);
           console.log("Fetched data:", response.data); // Debug backend response
         } else {
           toast.error("Failed to load players from server.");
