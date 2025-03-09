@@ -48,6 +48,7 @@ To get started with theSpirit11 - Fantasy Cricket League, follow these steps:
     ```
 4. **Start the backend server**:
     ```sh
+    cd server
     npm start
         ```
 5. **Start the frontend development server**:
