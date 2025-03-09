@@ -39,7 +39,7 @@ const Login = () => {
         localStorage.setItem("name", data.name);
         localStorage.setItem("id",data.id)
   
-        navigate(data.isAdmin ? "/admin-panel" : "/user-dashboard");
+        navigate(data.isAdmin ? "/admin-panel" : "/");
       } else {
         setErrorMessage(data.message);
       }
