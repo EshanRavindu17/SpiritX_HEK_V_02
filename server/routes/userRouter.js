@@ -1,7 +1,12 @@
 import express from 'express';
+
 import {verifyUser} from '../middleware/verifyJWTMiddleware.js';
 import { changePassword } from '../controllers/authController.js';
+import { getPlayers } from '../controllers/userController.js';
 import { clearTeam, getfilterplayers, getLeaderboard, getPlayers, getTeam, removePlayer, submitTeam } from '../controllers/userController.js';
+import {verifyUser} from '../middleware/verifyJWTMiddleware.js';
+import { changePassword } from '../controllers/authController.js';
+
 
 const userRouter = express.Router();
 
