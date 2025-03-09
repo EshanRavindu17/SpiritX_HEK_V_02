@@ -3,7 +3,7 @@ import { api } from '../../../axios.js';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; 
 import { firebaseAuth } from '../../../config/firebaseConfig.js';
 import { useNavigate, Link } from 'react-router-dom';
-import Mali from "../../assets/images/Login3.jpg";
+import Mali from "../../assets/images//Leather.jpg";
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +34,6 @@ const Login = () => {
         localStorage.setItem("id", data.id);
   
         navigate(data.isAdmin ? "/admin-panel" : "/");
-
       } else {
         setErrorMessage(data.message);
       }
