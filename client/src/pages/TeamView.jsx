@@ -10,8 +10,10 @@ const TeamView = () => {
   const [teamPoints, setTeamPoints] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem('id');
   const navigate = useNavigate();
+
+ 
 
   const handleRemovePlayer = async(player) => {
 

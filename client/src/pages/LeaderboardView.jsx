@@ -1,47 +1,55 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import TopThreePodium from '../components/TopThreePodium';
 import LeaderboardTable from '../components/LeaderboardTable';
-import imgvirat from "../assets/2.avif";
+import image1 from "../assets/images/icon.png"; // Dummy image
 
-const leaderboardData = [
-  { username: 'Meghan Jes...', points: 40, image: imgvirat },
-  { username: 'Bryan Wolf', points: 43, image: imgvirat },
-  { username: 'Alex Turner', points: 38, image: imgvirat },
-  { username: 'Marsha Fisher', points: 36, image: imgvirat },
-  { username: 'Juanita Cormier', points: 35, image: imgvirat },
-  { username: 'loggedInUser', points: 34, image: imgvirat },
-  { username: 'Tamara Schmidt', points: 33, image: imgvirat },
-  { username: 'Ricardo Veum', points: 32, image: imgvirat },
-  { username: 'Gary Sanford', points: 31, image: imgvirat },
-  { username: 'Becky Bartell', points: 30, image: imgvirat },
-];
-
-const loggedInUser = 'loggedInUser';
+const loggedInUser = 'loggedInUser'; // Assuming this is the logged-in user's username
 
 const sortLeaderboard = (data) => {
   return [...data].sort((a, b) => b.points - a.points);
 };
 
 const Leaderboard = () => {
-  const sortedLeaderboard = useMemo(() => sortLeaderboard(leaderboardData), []);
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  
+  // Memoize sorted leaderboard to avoid unnecessary re-sorts
+  const sortedLeaderboard = useMemo(() => sortLeaderboard(leaderboardData), [leaderboardData]);
   const topThree = sortedLeaderboard.slice(0, 3);
   const others = sortedLeaderboard.slice(3);
 
+  // Fetch leaderboard data from backend
   useEffect(() => {
-
     const fetchLeaderboard = async () => {
       try {
-        // Fetch leaderboard data from the server
-        // const response = await axios.get('/api/leaderboard');
-        // setLeaderboard(response.data);
+        const response = await axios.get('http://localhost:4000/api/user/getLeaderboard');
+        if (response.data.success) {
+          // Map backend data to frontend format
+          const formattedData = response.data.leaderboard.map(entry => ({
+            username: entry.ownerName,
+            points: entry.totalPoints,
+            image: image1 // Use dummy image for all entries
+          }));
+          setLeaderboardData(formattedData);
+        } else {
+          toast.error(response.data.message || "Failed to load leaderboard");
+        }
       } catch (error) {
-        console.error('Error fetching leaderboard:', error);
+        console.log('Error fetching leaderboard:', error);
+        toast.error(error.message || 'Failed to fetch leaderboard. Please try again.');
       }
-    }
-  }, [sortedLeaderboard]);
+    };
+
+    fetchLeaderboard(); // Call the function
+  }, []); // Empty dependency array to run once on mount
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col relative overflow-hidden">
+      {/* Toast Container */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
       {/* Spotlight Background */}
       <div
         className="absolute inset-0"
@@ -67,12 +75,20 @@ const Leaderboard = () => {
 
         {/* Top 3 Section */}
         <div className="px-4 sm:px-6 md:px-8 py-6">
-          <TopThreePodium topThree={topThree} loggedInUser={loggedInUser} />
+          {leaderboardData.length > 0 ? (
+            <TopThreePodium topThree={topThree} loggedInUser={loggedInUser} />
+          ) : (
+            <p className="text-center text-gray-400">Loading or no leaderboard data available...</p>
+          )}
         </div>
 
         {/* Leaderboard List */}
         <div className="flex-1 px-4 sm:px-6 md:px-8 pb-6">
-          <LeaderboardTable others={others} loggedInUser={loggedInUser} />
+          {leaderboardData.length > 0 ? (
+            <LeaderboardTable others={others} loggedInUser={loggedInUser} />
+          ) : (
+            <p className="text-center text-gray-400">No additional leaderboard entries to display.</p>
+          )}
         </div>
       </div>
     </div>

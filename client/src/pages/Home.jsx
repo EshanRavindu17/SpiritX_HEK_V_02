@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Leaderboard from "../assets/images/PLayersView.png";
 import teamview from "../assets/images/Team.jpg";
 import players from "../assets/images/newplayer.avif";
@@ -7,6 +7,27 @@ import selectteam from "../assets/images/teamteam.avif";
 import "../pages/Home.css";
 
 const HomeScreen = () => {
+  const [userId,setUserId] = useState('');
+  const [name,setname]=useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const id = localStorage.getItem('id');
+    setUserId(id);
+    if(!id){
+      navigate('/login');
+    }else{
+      const name = localStorage.getItem('name');
+      setname(name);
+    }
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem('id');
+    localStorage.removeItem('name');
+    navigate('/login');
+  }
+
   return (
     <div className="min-h-screen">
       {/* Animated Background */}
@@ -24,7 +45,7 @@ const HomeScreen = () => {
           </h1>
 
           </div>
-          <div className="absolute right-4 sm:right-6 md:right-8 flex items-center space-x-3 sm:space-x-4">
+          <div className="absolute left-4 sm:left-6 md:left-8 flex items-center space-x-3 sm:space-x-4">
           
             <svg
               className="w-6 h-6 sm:w-8 sm:h-8 text-white"
@@ -40,6 +61,12 @@ const HomeScreen = () => {
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
+            <span className="text-white font-bold">{name}</span>
+          </div>
+          <div className="absolute right-4 sm:right-6 md:right-8">
+            <button 
+            onClick={logout}
+            className="text-white bg-red-700 px-2 py-1 rounded-md font-bold hover:bg-red-800 focus:outline-none">logout</button>
           </div>
         </header>
 
