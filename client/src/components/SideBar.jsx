@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { FaBars, FaTimes, FaListAlt, FaUserCircle, FaUsers } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FaBars, FaTimes, FaListAlt, FaUserCircle, FaUsers, FaKey } from 'react-icons/fa';
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLinkClick = () => {
     setIsOpen(false);
   };
+
+  const logout = () =>{
+    localStorage.removeItem("token")
+    localStorage.removeItem("id")
+    localStorage.removeItem("name")
+    navigate("/login")
+  }
 
   return (
     <>
@@ -60,14 +68,18 @@ const SideBar = () => {
           </NavLink>
 
           <NavLink
-            to='/change-password'
+            to='/change-admin-password'
             className={({ isActive }) =>
               `${isActive ? 'bg-purple-700 shadow-lg' : 'hover:bg-gray-700'} flex items-center space-x-4 block py-3 px-5 rounded-md transition-all duration-300 font-poppins`}
             onClick={handleLinkClick}
           >
-            <FaUserCircle className='text-xl' />
+            <FaKey className='text-xl' />
             <span className='text-lg'>Change password</span>
           </NavLink>
+
+          <button
+          onClick={logout}
+          className='bg-red-600 px-8 ml-4 mt-4 py-1 rounded'>logout</button>
         </div>
       </div>
 
