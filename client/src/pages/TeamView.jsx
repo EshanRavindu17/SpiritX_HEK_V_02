@@ -70,6 +70,10 @@ const TeamView = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      navigate('/login');
+    }
     const fetchTeam = async () => {
       try {
         const jwtToken = localStorage.getItem('token');

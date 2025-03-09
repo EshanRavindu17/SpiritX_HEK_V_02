@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import TopThreePodium from '../components/TopThreePodium';
 import LeaderboardTable from '../components/LeaderboardTable';
 import image1 from "../assets/images/icon.png"; // Dummy image
+import { useNavigate } from 'react-router-dom';
+
 
 const loggedInUser = 'loggedInUser'; // Assuming this is the logged-in user's username
 
@@ -14,7 +16,7 @@ const sortLeaderboard = (data) => {
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
-  
+  const naviagte=useNavigate();
   // Memoize sorted leaderboard to avoid unnecessary re-sorts
   const sortedLeaderboard = useMemo(() => sortLeaderboard(leaderboardData), [leaderboardData]);
   const topThree = sortedLeaderboard.slice(0, 3);
@@ -22,6 +24,11 @@ const Leaderboard = () => {
 
   // Fetch leaderboard data from backend
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      naviagte('/login');
+    }
+   
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/user/getLeaderboard');

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 import image1 from "../assets/images/icon.png";
+import { useNavigate } from "react-router-dom";
 
 const PlayersView = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,8 +20,14 @@ const PlayersView = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(0);
 
   const searchInputRef = useRef(null);
+  const naviagte=useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      naviagte('/login');
+    }
+
     const fetchPlayers = async () => {
       try {
         const response = await axios.get("http://localhost:4000/api/user/getplayers");

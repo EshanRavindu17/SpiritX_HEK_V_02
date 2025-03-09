@@ -33,6 +33,10 @@ const SelectTeamView = () => {
 
   // Fetch players from backend
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      navigate('/login');
+    }
     const fetchPlayers = async () => {
       try {
         const response = await axios.get(`http://localhost:4000/api/user/getfilterplayers/${id}`);
