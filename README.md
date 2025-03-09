@@ -83,5 +83,5 @@ Clone the repository and install the required dependencies:
 
 ```bash
 git clone https://github.com/EshanRavindu17/SpiritX_HEK_V_02.git
-cd spirit11
+cd client
 npm install
