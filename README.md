@@ -6,7 +6,7 @@ Welcome to **Spirit11**, a thrilling fantasy cricket league where you can unleas
 
 ---
 
-## Features
+## ✨Features
 
 - **Dream Team Creation**: Assemble your perfect lineup by selecting from real university cricket players.
 - **Player Statistics**: Analyze in-depth stats to make informed decisions and optimize your team.
@@ -17,7 +17,7 @@ Welcome to **Spirit11**, a thrilling fantasy cricket league where you can unleas
 
 ---
 
-## Tech Stack
+## 🛠️Tech Stack
 
 - **Frontend**: React, React Router, Tailwind CSS
 - **Backend**: Node.js, Express, Firebase Admin SDK
@@ -27,7 +27,7 @@ Welcome to **Spirit11**, a thrilling fantasy cricket league where you can unleas
 
 ---
 
-## How to Play
+## 🎮How to Play
 
 1. **Sign Up/Login**: Create an account or log in to get started.
 2. **Build Your Team**: Pick 11 players from a pool of university cricket stars within a budget.
