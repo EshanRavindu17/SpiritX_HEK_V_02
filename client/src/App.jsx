@@ -8,8 +8,8 @@ import Login from './pages/commonPages/Login'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 import TeamView from './pages/TeamView';
+import Home from './pages/Home'
 import ForgotPassword from './pages/commonPages/FogotPassword';
-
 
 //Eshan
 import BudgetView from './pages/BudgetView'
@@ -23,6 +23,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />

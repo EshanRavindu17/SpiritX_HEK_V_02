@@ -1,0 +1,46 @@
+@keyframes backgroundAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animated-background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(270deg, 
+        #0a1f44,  /* Navy Blue */
+        #0b2815,  /* Forest Green */
+        #352602,  /* Dark Golden */
+        #102030,  /* Deep Midnight */
+        #1b1b2f,  /* Dark Purple-Blue */
+        #2c3e50,  /* Dark Steel Blue */
+        #1d1d1d,  /* Rich Black */
+        #4b5320,  /* Army Green */
+        #2a2a40,  /* Dark Indigo */
+        #8b5a2b,  /* Saddle Brown */
+        #0e0b16,  /* Black Violet */
+        #1c1c1c,  /* Deep Charcoal */
+        #2b221f,  /* Espresso Brown */
+        #37474f,  /* Gunmetal Gray */
+        #3a3f5f   /* Twilight Blue */
+    );
+    background-size: 800% 800%;
+    animation: backgroundAnimation 40s ease infinite;
+    z-index: -1;
+}
+
+.relative {
+    position: relative;
+    transition: transform 0.3s ease, z-index 0.3s ease;
+}
+
+.relative:hover {
+    z-index: 10; /* Brings hovered element to the front */
+    transform: scale(1.05); /* Slightly enlarges the hovered element */
+}
+
+header.relative:hover {
+    z-index: initial;
+    transform: initial;
+}
