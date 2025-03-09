@@ -37,6 +37,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("isAdmin", data.isAdmin);
         localStorage.setItem("name", data.name);
+        localStorage.setItem("id",data.id)
   
         navigate(data.isAdmin ? "/admin-panel" : "/user-dashboard");
       } else {

@@ -66,4 +66,28 @@
       }
   };
 
+        const isAdmin = userData.isAdmin || false; // Ensure it exists
+        const name = userData.name || "User";      // Ensure name exists
+    
+        // 🔐 Generate a JWT for future authentication
+        const jwtToken = jwt.sign(
+          { uid, role: isAdmin ? "admin" : "user", name },
+          process.env.JWT_SECRET,
+          { expiresIn: "7d" } // Token expires in 7 days
+        );
+    console.log("jwtToken :",jwtToken)
+        // ✅ Send response with role, name & JWT
+        res.json({ 
+          token: jwtToken,
+          isAdmin: isAdmin ? true : false,
+          name ,
+          id:uid
+        });
+    
+    } catch (error) {
+        console.error("Auth error:", error);
+        return res.status(401).json({ success: false, message: "You can't access" });
+    }
+};
+
   export default verifyUser;
