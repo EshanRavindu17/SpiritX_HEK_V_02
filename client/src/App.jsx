@@ -33,8 +33,9 @@ function App() {
 
         
         <Route path="/send-password-reset" element={<ChangeAdminPassword />} />
+        
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/change-password" element={<ChangeUserPassword />} />
-        <Route path="/sign-up" element={<SignUp />} />
 
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
