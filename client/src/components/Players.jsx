@@ -71,7 +71,7 @@ const Players = () => {
         <div>Loading</div>
       ) : (
         <div className='flex-1 p-6 md:p-8 bg-gray-100 min-h-screen'>
-          <h2 className='text-3xl font-bold text-gray-800 mb-6 font-poppins'>Player List</h2>
+          <h2 className='text-3xl justify-end font-bold text-gray-800 mb-6 font-poppins'>Player List</h2>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
             {playersData.map((player) => (
               <div

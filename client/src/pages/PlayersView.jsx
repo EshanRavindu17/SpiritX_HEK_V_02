@@ -2,9 +2,6 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 import image1 from "../assets/images/icon.png";
-import { firestoreDB } from '../../../client/config/firebaseConfig'; // Adjust pathimport { collection, onSnapshot } from 'firebase/firestore';
-import { doc, setDoc,collection ,onSnapshot} from 'firebase/firestore';
-
 import { useNavigate } from "react-router-dom";
 
 const PlayersView = () => {
@@ -26,20 +23,6 @@ const PlayersView = () => {
   const naviagte=useNavigate();
 
   useEffect(() => {
-    const playersCollection = collection(firestoreDB, 'players');
-    const unsubscribe = onSnapshot(
-      playersCollection,
-      (snapshot) => {
-        const playersArray = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPlayers(playersArray);
-        setLoading(false);
-      },
-      (error) => {
-        alert("Failed to fetch players: " + error.message);
-
     const token = localStorage.getItem('token');
     if(!token){
       naviagte('/login');
@@ -54,11 +37,11 @@ const PlayersView = () => {
       } catch (error) {
         alert("Failed to fetch players");
         console.error("Error fetching players:", error);
+      } finally {
         setLoading(false);
       }
-    );
-
-    return () => unsubscribe();
+    };
+    fetchPlayers();
   }, []);
 
   const UNIVERSITY_OPTIONS = useMemo(() => [
@@ -76,57 +59,22 @@ const PlayersView = () => {
 
   const handleFilter = (event) => setSelectedUniversity(event.target.value);
   const handleViewStats = (player) => {
-    console.log("activvve plyaer :",activePlayer)
+    
+    const battingStrikeRate = player.ballsFaced > 0 ? (player.totalRuns / player.ballsFaced) * 100 : 0;
+    const battingAverage = player.inningsPlayed > 0 ? player.totalRuns / player.inningsPlayed : 0;
+    const bowlingStrikeRate = player.wickets > 0 ? (player.oversBowled * 6) / player.wickets : 0;
+    const economyRate = player.oversBowled > 0 ? (player.runsConceded / (player.oversBowled * 6)) * 6 : 0;
 
+    const playerPoints = (battingStrikeRate / 5) + (battingAverage * 0.8) + (500 / (bowlingStrikeRate || 1)) + (140 / (economyRate || 1));
+    const playerValue = Math.round(((9 * playerPoints + 100) * 1000) / 50000) * 50000;
+    setBattingAverage(battingAverage);
+    setBattingStrikeRate(battingStrikeRate);
+    setBowlingStrikeRate(bowlingStrikeRate);
+    setEconomyRate(economyRate);
+    setPlayerPoints(playerPoints);
+    setPlayerValue(playerValue);
     setActivePlayer(player);
   }
-
-
-
-  useEffect(() => {
-    if (!activePlayer) return; // Exit if no active player
-console.log("active plyaer :",activePlayer)
-    const playerDoc = doc(firestoreDB, 'players', activePlayer.id);
-    const unsubscribe = onSnapshot(
-      playerDoc,
-      (docSnapshot) => {
-        if (docSnapshot.exists()) {
-          const updatedPlayer = { id: docSnapshot.id, ...docSnapshot.data() };
-          setActivePlayer(updatedPlayer); // Update activePlayer with latest data
-
-          // Recalculate stats
-          const battingStrikeRate = updatedPlayer.ballsFaced > 0 ? (updatedPlayer.totalRuns / updatedPlayer.ballsFaced) * 100 : 0;
-          const battingAverage = updatedPlayer.inningsPlayed > 0 ? updatedPlayer.totalRuns / updatedPlayer.inningsPlayed : 0;
-          const bowlingStrikeRate = updatedPlayer.wickets > 0 ? (updatedPlayer.oversBowled * 6) / updatedPlayer.wickets : 0;
-          const economyRate = updatedPlayer.oversBowled > 0 ? (updatedPlayer.runsConceded / (updatedPlayer.oversBowled * 6)) * 6 : 0;
-          const playerPoints = (battingStrikeRate / 5) + (battingAverage * 0.8) + (500 / (bowlingStrikeRate || 1)) + (140 / (economyRate || 1));
-          const playerValue = Math.round(((9 * playerPoints + 100) * 1000) / 50000) * 50000;
-
-          setBattingStrikeRate(battingStrikeRate);
-          setBattingAverage(battingAverage);
-          setBowlingStrikeRate(bowlingStrikeRate);
-          setEconomyRate(economyRate);
-          setPlayerPoints(playerPoints);
-          setPlayerValue(playerValue);
-        } else {
-          // If the player document no longer exists, close the modal
-          setActivePlayer(null);
-        }
-      },
-      (error) => {
-        console.error("Error fetching active player stats:", error);
-        alert("Failed to fetch player stats: " + error.message);
-        setActivePlayer(null); // Close modal on error
-      }
-    );
-
-    return () => {
-      console.log("Unsubscribing from active player listener");
-      unsubscribe();
-    };
-  }, [activePlayer]); // Dependency on activePlayer
-
-
   const closeStats = () => setActivePlayer(null);
 
   const filteredPlayers = useMemo(() => {
