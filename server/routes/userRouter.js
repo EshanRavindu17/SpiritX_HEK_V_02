@@ -5,7 +5,6 @@ import { getPlayers } from '../controllers/userController.js';
 
 const userRouter = express.Router();
 
-console.log("uuuuu")
 userRouter.post('/change-password', verifyUser, changePassword);
 
 

@@ -10,7 +10,6 @@ import dotenv from "dotenv";
 import admin from 'firebase-admin';
 
 import { auth } from "./config/firebaseAdmin.js"; // dont remove this
-import userRouter from "./routes/userRouter.js";
 dotenv.config();
 
 dotenv.config();

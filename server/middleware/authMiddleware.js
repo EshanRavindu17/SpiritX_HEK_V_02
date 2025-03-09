@@ -36,8 +36,14 @@
           const decodedToken = await admin.auth().verifyIdToken(token);
           const uid = decodedToken.uid;
       
+
+
+          
           // 🔍 Fetch user role & name from Firestore
           const userDoc = await admin.firestore().collection("users").doc(uid).get();
+          console.log("user uid :",uid)
+          console.log("user doc :",userDoc)
+
           if (!userDoc.exists) {
             return res.status(404).json({ message: "User not found" });
           }
