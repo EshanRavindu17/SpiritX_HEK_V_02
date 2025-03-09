@@ -10,10 +10,14 @@ import SelectTeam from './pages/SelectTeam';
 import TeamView from './pages/TeamView';
 import Home from './pages/Home'
 import ForgotPassword from './pages/commonPages/FogotPassword';
+import ChangeAdminPassword from './pages/Admin/changePassword'
+import ResetPassword from './pages/Admin/ResetPassword'
+import ChangeUserPassword from './pages/User/changePassword'
+import SignUp from './pages/user/signUp'
+
 
 //Eshan
 import BudgetView from './pages/BudgetView'
-
 import EditPlayer from './components/EditPlayer'
 import LeaderboardView from './pages/LeaderboardView';
 
@@ -22,8 +26,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home/>} />
+
+
+        
+        <Route path="/send-password-reset" element={<ChangeAdminPassword />} />
+        <Route path="/change-password" element={<ChangeUserPassword />} />
+        <Route path="/sign-up" element={<SignUp />} />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />

@@ -1,69 +1,39 @@
 import React, { useState } from 'react';
-import { getAuth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { FaSpinner } from 'react-icons/fa'; // For loading spinner
-import { api } from '../axios';
-const ChangePassword = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+import { FaSpinner } from 'react-icons/fa';
+import { api } from '../../../axios';
+
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChangePassword = async (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
-  
-    if (newPassword !== confirmPassword) {
-      setErrorMessage('New passwords do not match.');
-      return;
-    }
-  
-    const auth = getAuth();
-    const user = auth.currentUser;
-  
-    if (!user) {
-      setErrorMessage('No user is signed in.');
-      return;
-    }
-  
+    
     setIsLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
-  
+    
+    
     try {
-      // Re-authenticate the user with their current password
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-  
-      // Get the Firebase ID token
-      const idToken = await user.getIdToken();
-  
-      // Send the request to the server
-      const response = await api.post(
-        '/admin/change-password',
-        {
-          currentPassword,
-          newPassword,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-  
+      const jwtToken = localStorage.getItem("token"); 
+
+    const response = await api.post("/admin/send-password-reset", 
+      { email }, 
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
+    );
+
       if (response.data.success) {
-        setSuccessMessage('Password changed successfully.');
-        setErrorMessage('');
-        navigate('/admin-panel')
-      } else {
-        setErrorMessage(response.data.message);
+        setSuccessMessage('Reset link and code sent to your email.');
+        setTimeout(() => navigate('/reset-password'), 2000);
       }
     } catch (error) {
-      console.error('Error:', error);
-      setErrorMessage('The current password is incorrect or the password update failed.');
+      setErrorMessage(error.response?.data?.message || 'Failed to send reset link.');
     } finally {
       setIsLoading(false);
     }
@@ -72,46 +42,20 @@ const ChangePassword = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-900">Change Your Password</h2>
-        <form className="mt-8 space-y-6" onSubmit={handleChangePassword}>
-          <div className="rounded-md shadow-sm -space-y-px">
+        <h2 className="text-2xl font-bold text-center text-gray-900">Reset Your Password</h2>
+        <form className="mt-8 space-y-6" onSubmit={handleForgotPassword}>
+          <div className="rounded-md shadow-sm">
             <div>
-              <label htmlFor="current-password" className="sr-only">Current Password</label>
+              <label htmlFor="email" className="sr-only">Email</label>
               <input
-                id="current-password"
-                name="current-password"
-                type="password"
+                id="email"
+                name="email"
+                type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Current Password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="new-password" className="sr-only">New Password</label>
-              <input
-                id="new-password"
-                name="new-password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
-              <input
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -137,7 +81,7 @@ const ChangePassword = () => {
               {isLoading ? (
                 <FaSpinner className="animate-spin" />
               ) : (
-                'Change Password'
+                'Send Reset Link'
               )}
             </button>
           </div>
@@ -146,5 +90,4 @@ const ChangePassword = () => {
     </div>
   );
 };
-
-export default ChangePassword;
+export default ForgotPassword

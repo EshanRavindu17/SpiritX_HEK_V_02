@@ -4,12 +4,15 @@ import cors from "cors";
  import authTest from "./routes/authTest.js";
 import adminRouter from "./routes/adminRouter.js";
 import adminForgotPasswordRouter from "./routes/adminForgotPassowrdRouter.js";
-
+import userRouter from "./routes/userRouter.js"
 import dotenv from "dotenv";
+
+import admin from 'firebase-admin';
+
 import { auth } from "./config/firebaseAdmin.js"; // dont remove this
-import userRouter from "./routes/userRouter.js";
 dotenv.config();
 
+dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -27,6 +30,46 @@ app.use("/api", adminForgotPasswordRouter);
 app.use('/api/admin',adminRouter)
 app.use('/api/user',userRouter)
 
+app.post('/signup', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Basic validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email, and password are required' });
+  }
+
+  try {
+    // Create user in Firebase Authentication
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+      displayName: name, // Optional: Set displayName in Auth
+    });
+
+    // Store additional user data in Firestore
+    await admin.firestore().collection('users').doc(userRecord.uid).set({
+      name,
+      email,
+      uid: userRecord.uid,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // Send success response
+    res.status(201).json({ message: 'User created successfully', uid: userRecord.uid });
+  } catch (error) {
+    console.error('Signup error:', error);
+    // Handle specific Firebase errors
+    if (error.code === 'auth/email-already-exists') {
+      res.status(400).json({ error: 'Email already in use' });
+    } else if (error.code === 'auth/invalid-email') {
+      res.status(400).json({ error: 'Invalid email format' });
+    } else if (error.code === 'auth/weak-password') {
+      res.status(400).json({ error: 'Password must be at least 6 characters' });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+});
 const port = process.env.PORT;
 
 app.listen(port, () => {

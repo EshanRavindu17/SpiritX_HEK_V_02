@@ -7,7 +7,10 @@ export const getAdminDashboard = (req, res) => {
 };
 
 export const changePassword = async (req, res) => {
+  console.log("change password of user ",uid)
+
     const { currentPassword, newPassword } = req.body;
+    console.log("change password of user ",uid)
     const { uid } = req.user; 
     try {
   

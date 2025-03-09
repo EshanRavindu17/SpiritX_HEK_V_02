@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 
 dotenv.config(); // Load .env variables
 export const verifyUser = (req, res, next) => {
-
+console.log("userrrrrrr")
   try {
     const token = req.headers.authorization?.split(' ')[1]; 
+    console.log("token :",token)
 
    
     if (!token) {
@@ -15,6 +16,7 @@ export const verifyUser = (req, res, next) => {
 
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("decoded :",decoded)
 
     req.user = decoded; 
     next();
