@@ -34,6 +34,7 @@ const Login = () => {
         localStorage.setItem("id", data.id);
   
         navigate(data.isAdmin ? "/admin-panel" : "/");
+
       } else {
         setErrorMessage(data.message);
       }

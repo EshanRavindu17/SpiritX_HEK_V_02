@@ -25,6 +25,7 @@ const [userId,setUserId] = useState('');
   const logout = () => {
     localStorage.removeItem('id');
     localStorage.removeItem('name');
+    localStorage.removeItem('token');
     navigate('/login');
   }
 
