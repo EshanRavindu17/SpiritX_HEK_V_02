@@ -37,7 +37,15 @@ const SelectTeamView = () => {
           setBatters(response.data.batsmans || []);
           setBowlers(response.data.bowlers || []);
           setAllrounders(response.data.allRounders || []);
-          setTeam(response.data.selectedPlayers || []);
+          
+          // Set team and update budget based on selected players
+          const selectedPlayers = response.data.selectedPlayers || [];
+          setTeam(selectedPlayers);
+          
+          // Calculate total cost of selected players and update budget
+          const totalCost = selectedPlayers.reduce((sum, player) => sum + (player.cost || 0), 0);
+          setBudget(initialBudget - totalCost);
+
           console.log("Fetched data:", response.data); // Debug backend response
         } else {
           toast.error("Failed to load players from server.");
@@ -153,24 +161,21 @@ const SelectTeamView = () => {
   };
 
   // Handle team submission
-  const handleSubmitTeam = async() => {
+  const handleSubmitTeam = async () => {
     console.log('Team submitted:', team);
-    console.log("id",id) // Debug team submission
+    console.log("id", id); // Debug team submission
 
-
-    try{
+    try {
       const response = await axios.post('http://localhost:4000/api/user/submitteam', 
-        {team,id}
-      )
-      if(response.data.success){
+        { team, id }
+      );
+      if (response.data.success) {
         toast.success('Team submitted successfully!');
       }
-    }catch(error){
+    } catch (error) {
       toast.error('Failed to submit team. Please try again.');
       console.error('Error submitting team:', error);
     }
-      
-    
   };
 
   // Close dropdown if clicking outside

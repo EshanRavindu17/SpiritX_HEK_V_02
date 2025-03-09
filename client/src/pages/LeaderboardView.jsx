@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import TopThreePodium from '../components/TopThreePodium';
 import LeaderboardTable from '../components/LeaderboardTable';
 import imgvirat from "../assets/2.avif";
@@ -26,6 +26,19 @@ const Leaderboard = () => {
   const sortedLeaderboard = useMemo(() => sortLeaderboard(leaderboardData), []);
   const topThree = sortedLeaderboard.slice(0, 3);
   const others = sortedLeaderboard.slice(3);
+
+  useEffect(() => {
+
+    const fetchLeaderboard = async () => {
+      try {
+        // Fetch leaderboard data from the server
+        // const response = await axios.get('/api/leaderboard');
+        // setLeaderboard(response.data);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      }
+    }
+  }, [sortedLeaderboard]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col relative overflow-hidden">
