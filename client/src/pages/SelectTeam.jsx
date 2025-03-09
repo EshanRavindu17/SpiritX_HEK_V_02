@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 // Categories must match backend exactly
 const categories = ['Batters', 'Bowlers', 'All-rounders'];
 
-const initialBudget = 100000000; // Rs.9,000,000
+const initialBudget = 9000000; // Rs.9,000,000
 const maxTeamSize = 11; // Maximum number of players allowed
 
 const SelectTeamView = () => {
