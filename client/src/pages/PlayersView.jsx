@@ -5,12 +5,10 @@ import image1 from "../assets/images/icon.png";
 import { firestoreDB } from '../../../client/config/firebaseConfig'; // Adjust pathimport { collection, onSnapshot } from 'firebase/firestore';
 import { doc, setDoc,collection ,onSnapshot} from 'firebase/firestore';
 
-
 const PlayersView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [activePlayer, setActivePlayer] = useState(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,10 +16,10 @@ const PlayersView = () => {
   const [battingAverage, setBattingAverage] = useState(0);
   const [bowlingStrikeRate, setBowlingStrikeRate] = useState(0);
   const [economyRate, setEconomyRate] = useState(0);
-  const [playerPoints, setPlayerPoints] = useState(0);
+  const [playerPoints, setPlayerPoints] = useState(0)
   const [playerValue, setPlayerValue] = useState(0);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(0);
 
-  const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
 
   useEffect(() => {
@@ -56,8 +54,8 @@ const PlayersView = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setIsDropdownOpen(!!event.target.value);
-  };
+        setIsDropdownOpen(!!event.target.value);
+      };
 
   const handleFilter = (event) => setSelectedUniversity(event.target.value);
   const handleViewStats = (player) => {
@@ -115,6 +113,9 @@ console.log("active plyaer :",activePlayer)
   const closeStats = () => setActivePlayer(null);
 
   const filteredPlayers = useMemo(() => {
+    console.log(playerPoints)
+    console.log(isDropdownOpen)
+
     return players.filter((player) => {
       const matchesSearch =
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -155,6 +156,7 @@ console.log("active plyaer :",activePlayer)
           ))}
         </select>
       </div>
+
       {loading ? (
         <p className="text-gray-400">Loading players...</p>
       ) : (

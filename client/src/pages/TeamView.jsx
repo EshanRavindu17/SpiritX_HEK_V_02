@@ -11,9 +11,12 @@ const TeamView = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const userId = localStorage.getItem('id');
-  const navigate = useNavigate();
 
  
+
+
+
+  const navigate = useNavigate();
 
   const handleRemovePlayer = async(player) => {
 

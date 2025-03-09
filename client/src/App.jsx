@@ -8,11 +8,13 @@ import Login from './pages/commonPages/Login'
 import PlayersView from './pages/PlayersView';
 import SelectTeam from './pages/SelectTeam';
 import TeamView from './pages/TeamView';
+import Home from './pages/Home'
 import ForgotPassword from './pages/commonPages/FogotPassword';
 import ChangeAdminPassword from './pages/Admin/changePassword'
 import ResetPassword from './pages/Admin/ResetPassword'
 import ChangeUserPassword from './pages/User/changePassword'
 import SignUp from './pages/user/signUp'
+
 
 //Eshan
 import BudgetView from './pages/BudgetView'
@@ -32,6 +34,8 @@ function App() {
 
         <Route path="/reset-password" element={<ResetPassword />} />
 
+
+        <Route path="/home" element={<Home/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/playersview" element={<PlayersView />} />
         <Route path="/selectteam" element={<SelectTeam />} />
