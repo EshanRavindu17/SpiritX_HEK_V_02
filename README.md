@@ -82,8 +82,9 @@ Before you begin, ensure you have the following installed:
 Clone the repository and install the required dependencies:
 
 ![Screenshot 2025-03-09 191805](https://github.com/user-attachments/assets/05fe9a10-5bab-4c1d-84a7-d4cd21dda121)
-
+![WhatsApp Image 2025-03-09 at 19 19 53_e0d0f06f](https://github.com/user-attachments/assets/bb625f20-b96c-4b4e-a74d-d84beb99fbd4)
 ```bash
+
 git clone https://github.com/EshanRavindu17/SpiritX_HEK_V_02.git
 cd client
 npm install
