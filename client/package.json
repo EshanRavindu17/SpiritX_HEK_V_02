@@ -16,11 +16,7 @@
     "framer-motion": "^12.4.10",
     "lucide-react": "^0.479.0",
     "firebase": "^11.4.0",
-<<<<<<< HEAD
-    "lucide-react": "^0.479.0",
-=======
 
->>>>>>> 6d8b6c09df9d6af2b80423d18a0e56f08065bec6
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",

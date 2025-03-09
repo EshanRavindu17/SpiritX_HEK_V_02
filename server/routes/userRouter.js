@@ -12,6 +12,9 @@ userRouter.post('/change-password', verifyUser, changePassword);
 
 userRouter.get('/getplayers',getPlayers)
 
+
+
+
+
+
 export default userRouter;
-
-
