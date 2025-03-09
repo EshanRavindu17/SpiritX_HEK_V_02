@@ -27,6 +27,35 @@ Welcome to **Spirit11**, a thrilling fantasy cricket league where you can unleas
 
 ---
 
+## Getting Started
+
+To get started with theSpirit11 - Fantasy Cricket League, follow these steps:
+
+1. **Clone the repository**:
+    ```sh
+    git clone https://github.com/EshanRavindu17/SpiritX_HEK_V_02.git
+    ```
+
+2. **Install backend dependencies**:
+    ```sh
+    cd server
+    npm install
+    ```
+3. **Install frontend dependencies**:
+    ```sh
+    cd client
+    npm install
+    ```
+4. **Start the backend server**:
+    ```sh
+    npm start
+        ```
+5. **Start the frontend development server**:
+    ```sh
+    cd client
+    npm run dev
+    ```
+
 ## 🎮How to Play
 
 1. **Sign Up/Login**: Create an account or log in to get started.
