@@ -7,7 +7,6 @@ import { clearTeam, getfilterplayers, getLeaderboard, getPlayers, getTeam, remov
 
 const userRouter = express.Router();
 
-console.log("uuuuu")
 userRouter.post('/change-password', verifyUser, changePassword);
 userRouter.get('/getplayers',getPlayers)
 userRouter.get('/getfilterplayers/:id',getfilterplayers)
