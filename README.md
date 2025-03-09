@@ -80,6 +80,7 @@ Before you begin, ensure you have the following installed:
 ### Install Dependencies
 
 Clone the repository and install the required dependencies:
+![Screenshot 2025-03-09 191426](https://github.com/user-attachments/assets/37f454b3-1d3f-456b-a7ae-db6841c8d6b7)
 
 ```bash
 git clone https://github.com/EshanRavindu17/SpiritX_HEK_V_02.git
